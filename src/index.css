@@ -56,5 +56,121 @@
   body {
     @apply bg-background text-foreground;
     font-family: 'Inter', 'Segoe UI', 'Roboto', system-ui, sans-serif;
+    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+  }
+}
+
+@layer components {
+  /* Manufacturing-friendly theme enhancements */
+  .theme-transition {
+    @apply transition-colors duration-200 ease-in-out;
+  }
+  
+  /* Status-specific styling for dark mode */
+  .status-normal {
+    @apply bg-green-50 text-green-800 border-green-200 dark:bg-green-900/20 dark:text-green-300 dark:border-green-800;
+  }
+  
+  .status-overdue {
+    @apply bg-red-50 text-red-800 border-red-200 dark:bg-red-900/20 dark:text-red-300 dark:border-red-800;
+  }
+  
+  .status-warning {
+    @apply bg-yellow-50 text-yellow-800 border-yellow-200 dark:bg-yellow-900/20 dark:text-yellow-300 dark:border-yellow-800;
+  }
+  
+  .status-info {
+    @apply bg-blue-50 text-blue-800 border-blue-200 dark:bg-blue-900/20 dark:text-blue-300 dark:border-blue-800;
+  }
+  
+  /* Enhanced card styling for better visibility */
+  .card-enhanced {
+    @apply bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md theme-transition;
+  }
+  
+  /* Progress bar enhancements */
+  .progress-enhanced {
+    @apply bg-gray-200 dark:bg-gray-700;
+  }
+  
+  .progress-fill {
+    @apply bg-blue-500 dark:bg-blue-400 transition-all duration-300 ease-out;
+  }
+  
+  /* Button enhancements for better touch targets */
+  .btn-touch {
+    @apply min-h-[44px] min-w-[44px] touch-manipulation;
+  }
+  
+  /* Focus styles for accessibility */
+  .focus-enhanced {
+    @apply focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-blue-400 dark:focus:ring-offset-gray-800;
+  }
+  
+  /* High contrast mode for manufacturing floor */
+  .high-contrast {
+    @apply contrast-125 saturate-110;
+  }
+  
+  /* Scrollbar styling for dark mode */
+  .scrollbar-styled {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(156 163 175) transparent;
+  }
+  
+  .scrollbar-styled::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  .scrollbar-styled::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  .scrollbar-styled::-webkit-scrollbar-thumb {
+    background-color: rgb(156 163 175);
+    border-radius: 3px;
+  }
+  
+  .dark .scrollbar-styled {
+    scrollbar-color: rgb(75 85 99) transparent;
+  }
+  
+  .dark .scrollbar-styled::-webkit-scrollbar-thumb {
+    background-color: rgb(75 85 99);
+  }
+}
+
+@layer utilities {
+  /* Animation utilities */
+  .animate-fade-in {
+    animation: fadeIn 0.3s ease-in-out;
+  }
+  
+  .animate-slide-in {
+    animation: slideIn 0.3s ease-out;
+  }
+  
+  .animate-scale-in {
+    animation: scaleIn 0.2s ease-out;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  @keyframes slideIn {
+    from { transform: translateY(-10px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  
+  @keyframes scaleIn {
+    from { transform: scale(0.95); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+  
+  /* Pulse animation for loading states */
+  .pulse-slow {
+    animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   }
 }
