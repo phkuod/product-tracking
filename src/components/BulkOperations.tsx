@@ -208,7 +208,7 @@ export function BulkOperations({
     }
   };
 
-  if (!someSelected && !showBulkMenu) {
+  if (!someSelected) {
     return (
       <div className="flex items-center space-x-2">
         <button
