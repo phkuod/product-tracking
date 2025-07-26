@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { CheckSquare, Square, Edit, Trash2, MoreHorizontal, X } from 'lucide-react';
+import { CheckSquare, Square, Edit, Trash2, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAppContext } from '@/contexts/AppContext';
+import { useErrorHandler } from '@/hooks/useErrorHandler';
 import { Product } from '@/types';
 
 interface BulkOperationsProps {
@@ -20,8 +21,9 @@ export function BulkOperations({
   onBulkUpdate 
 }: BulkOperationsProps) {
   const { updateProduct, deleteProduct, addNotification } = useAppContext();
-  const [showBulkMenu, setShowBulkMenu] = useState(false);
+  const { handleError } = useErrorHandler();
   const [showUpdateForm, setShowUpdateForm] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [bulkUpdateData, setBulkUpdateData] = useState({
     status: '',
     progress: '',
@@ -39,77 +41,171 @@ export function BulkOperations({
     }
   };
 
-  const handleBulkStatusUpdate = () => {
+  const handleBulkStatusUpdate = async () => {
     if (!bulkUpdateData.status) return;
     
-    const updatedProducts = products.filter(p => selectedProducts.includes(p.id));
+    setIsLoading(true);
     
-    updatedProducts.forEach(product => {
-      const updatedProduct = {
-        ...product,
-        status: bulkUpdateData.status as 'normal' | 'overdue',
-        updatedAt: new Date()
-      };
-      updateProduct(updatedProduct);
-    });
-    
-    addNotification({
-      type: 'success',
-      title: 'Bulk Update Complete',
-      message: `Updated status for ${updatedProducts.length} products to ${bulkUpdateData.status}`
-    });
-    
-    setShowUpdateForm(false);
-    setBulkUpdateData({ status: '', progress: '', currentStation: '' });
-    onSelectionChange([]);
-    onBulkUpdate();
+    try {
+      const updatedProducts = products.filter(p => selectedProducts.includes(p.id));
+      
+      if (updatedProducts.length === 0) {
+        throw new Error('No products selected for update');
+      }
+
+      // Validate status
+      if (!['normal', 'overdue'].includes(bulkUpdateData.status)) {
+        throw new Error('Invalid status value');
+      }
+      
+      // Update products one by one with error handling
+      let successCount = 0;
+      let errorCount = 0;
+      
+      for (const product of updatedProducts) {
+        try {
+          const updatedProduct = {
+            ...product,
+            status: bulkUpdateData.status as 'normal' | 'overdue',
+            updatedAt: new Date()
+          };
+          updateProduct(updatedProduct);
+          successCount++;
+        } catch (error) {
+          errorCount++;
+          console.error(`Failed to update product ${product.name}:`, error);
+        }
+      }
+      
+      if (successCount > 0) {
+        addNotification({
+          type: 'success',
+          title: 'Bulk Update Complete',
+          message: `Updated status for ${successCount} products to ${bulkUpdateData.status}${errorCount > 0 ? ` (${errorCount} failed)` : ''}`
+        });
+      }
+
+      if (errorCount > 0 && successCount === 0) {
+        throw new Error(`Failed to update all ${errorCount} products`);
+      }
+      
+      setShowUpdateForm(false);
+      setBulkUpdateData({ status: '', progress: '', currentStation: '' });
+      onSelectionChange([]);
+      onBulkUpdate();
+    } catch (error) {
+      handleError(error as Error, 'Bulk Status Update');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleBulkProgressUpdate = () => {
+  const handleBulkProgressUpdate = async () => {
     if (!bulkUpdateData.progress) return;
     
-    const updatedProducts = products.filter(p => selectedProducts.includes(p.id));
-    const progressValue = parseInt(bulkUpdateData.progress);
+    setIsLoading(true);
     
-    updatedProducts.forEach(product => {
-      const updatedProduct = {
-        ...product,
-        progress: progressValue,
-        updatedAt: new Date()
-      };
-      updateProduct(updatedProduct);
-    });
-    
-    addNotification({
-      type: 'success',
-      title: 'Bulk Update Complete',
-      message: `Updated progress for ${updatedProducts.length} products to ${progressValue}%`
-    });
-    
-    setShowUpdateForm(false);
-    setBulkUpdateData({ status: '', progress: '', currentStation: '' });
-    onSelectionChange([]);
-    onBulkUpdate();
+    try {
+      const updatedProducts = products.filter(p => selectedProducts.includes(p.id));
+      const progressValue = parseInt(bulkUpdateData.progress);
+      
+      if (updatedProducts.length === 0) {
+        throw new Error('No products selected for update');
+      }
+
+      // Validate progress value
+      if (isNaN(progressValue) || progressValue < 0 || progressValue > 100) {
+        throw new Error('Progress must be between 0 and 100');
+      }
+      
+      let successCount = 0;
+      let errorCount = 0;
+      
+      for (const product of updatedProducts) {
+        try {
+          const updatedProduct = {
+            ...product,
+            progress: progressValue,
+            updatedAt: new Date()
+          };
+          updateProduct(updatedProduct);
+          successCount++;
+        } catch (error) {
+          errorCount++;
+          console.error(`Failed to update product ${product.name}:`, error);
+        }
+      }
+      
+      if (successCount > 0) {
+        addNotification({
+          type: 'success',
+          title: 'Bulk Update Complete',
+          message: `Updated progress for ${successCount} products to ${progressValue}%${errorCount > 0 ? ` (${errorCount} failed)` : ''}`
+        });
+      }
+
+      if (errorCount > 0 && successCount === 0) {
+        throw new Error(`Failed to update all ${errorCount} products`);
+      }
+      
+      setShowUpdateForm(false);
+      setBulkUpdateData({ status: '', progress: '', currentStation: '' });
+      onSelectionChange([]);
+      onBulkUpdate();
+    } catch (error) {
+      handleError(error as Error, 'Bulk Progress Update');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleBulkDelete = () => {
+  const handleBulkDelete = async () => {
+    if (selectedProducts.length === 0) {
+      handleError('No products selected for deletion', 'Bulk Delete');
+      return;
+    }
+
     if (!confirm(`Are you sure you want to delete ${selectedProducts.length} products? This action cannot be undone.`)) {
       return;
     }
     
-    const deletedCount = selectedProducts.length;
-    selectedProducts.forEach(productId => {
-      deleteProduct(productId);
-    });
+    setIsLoading(true);
     
-    addNotification({
-      type: 'warning',
-      title: 'Bulk Delete Complete',
-      message: `Deleted ${deletedCount} products from the system`
-    });
-    
-    onSelectionChange([]);
-    onBulkUpdate();
+    try {
+      let successCount = 0;
+      let errorCount = 0;
+      const deletedProducts: string[] = [];
+      
+      for (const productId of selectedProducts) {
+        try {
+          deleteProduct(productId);
+          deletedProducts.push(productId);
+          successCount++;
+        } catch (error) {
+          errorCount++;
+          console.error(`Failed to delete product ${productId}:`, error);
+        }
+      }
+      
+      if (successCount > 0) {
+        addNotification({
+          type: 'warning',
+          title: 'Bulk Delete Complete',
+          message: `Deleted ${successCount} products from the system${errorCount > 0 ? ` (${errorCount} failed)` : ''}`
+        });
+      }
+
+      if (errorCount > 0 && successCount === 0) {
+        throw new Error(`Failed to delete all ${errorCount} products`);
+      }
+      
+      onSelectionChange([]);
+      onBulkUpdate();
+    } catch (error) {
+      handleError(error as Error, 'Bulk Delete');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   if (!someSelected && !showBulkMenu) {
@@ -153,6 +249,7 @@ export function BulkOperations({
               variant="outline"
               size="sm"
               onClick={() => setShowUpdateForm(true)}
+              disabled={isLoading}
               className="h-8"
             >
               <Edit className="w-3 h-3 mr-1" />
@@ -163,10 +260,11 @@ export function BulkOperations({
               variant="outline"
               size="sm"
               onClick={handleBulkDelete}
-              className="h-8 text-red-600 hover:text-red-700"
+              disabled={isLoading}
+              className="h-8 text-red-600 hover:text-red-700 disabled:text-gray-400"
             >
               <Trash2 className="w-3 h-3 mr-1" />
-              Delete
+              {isLoading ? 'Deleting...' : 'Delete'}
             </Button>
           </div>
         </div>
@@ -208,9 +306,10 @@ export function BulkOperations({
                 <Button
                   size="sm"
                   onClick={handleBulkStatusUpdate}
+                  disabled={isLoading}
                   className="w-full mt-2"
                 >
-                  Update Status
+                  {isLoading ? 'Updating...' : 'Update Status'}
                 </Button>
               )}
             </div>
@@ -231,9 +330,10 @@ export function BulkOperations({
                 <Button
                   size="sm"
                   onClick={handleBulkProgressUpdate}
+                  disabled={isLoading}
                   className="w-full mt-2"
                 >
-                  Update Progress
+                  {isLoading ? 'Updating...' : 'Update Progress'}
                 </Button>
               )}
             </div>

@@ -191,43 +191,104 @@ export function AppProvider({ children }: { children: ReactNode }) {
   }, [state.stations, setPersistedStations]);
 
   const addProduct = (productData: Omit<Product, 'id' | 'createdAt' | 'updatedAt'>) => {
-    const newProduct: Product = {
-      ...productData,
-      id: `product_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-    
-    dispatch({ type: 'ADD_PRODUCT', payload: newProduct });
-    
-    addNotification({
-      type: 'success',
-      title: 'Product Added',
-      message: `${newProduct.name} has been added to the tracking system.`
-    });
+    try {
+      // Validate required fields
+      if (!productData.name?.trim()) {
+        throw new Error('Product name is required');
+      }
+      if (!productData.model?.trim()) {
+        throw new Error('Product model is required');
+      }
+      if (!productData.route) {
+        throw new Error('Product route is required');
+      }
+
+      const newProduct: Product = {
+        ...productData,
+        id: `product_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+      
+      dispatch({ type: 'ADD_PRODUCT', payload: newProduct });
+      
+      addNotification({
+        type: 'success',
+        title: 'Product Added',
+        message: `${newProduct.name} has been added to the tracking system.`
+      });
+    } catch (error) {
+      console.error('Error adding product:', error);
+      addNotification({
+        type: 'error',
+        title: 'Failed to Add Product',
+        message: error instanceof Error ? error.message : 'An unexpected error occurred'
+      });
+      throw error; // Re-throw for component-level handling if needed
+    }
   };
 
   const updateProduct = (product: Product) => {
-    const updatedProduct = { ...product, updatedAt: new Date() };
-    dispatch({ type: 'UPDATE_PRODUCT', payload: updatedProduct });
-    
-    addNotification({
-      type: 'info',
-      title: 'Product Updated',
-      message: `${product.name} has been updated.`
-    });
+    try {
+      // Validate product exists
+      const existingProduct = state.products.find(p => p.id === product.id);
+      if (!existingProduct) {
+        throw new Error('Product not found');
+      }
+
+      // Validate required fields
+      if (!product.name?.trim()) {
+        throw new Error('Product name is required');
+      }
+      if (!product.model?.trim()) {
+        throw new Error('Product model is required');
+      }
+
+      const updatedProduct = { ...product, updatedAt: new Date() };
+      dispatch({ type: 'UPDATE_PRODUCT', payload: updatedProduct });
+      
+      addNotification({
+        type: 'info',
+        title: 'Product Updated',
+        message: `${product.name} has been updated.`
+      });
+    } catch (error) {
+      console.error('Error updating product:', error);
+      addNotification({
+        type: 'error',
+        title: 'Failed to Update Product',
+        message: error instanceof Error ? error.message : 'An unexpected error occurred'
+      });
+      throw error;
+    }
   };
 
   const deleteProduct = (productId: string) => {
-    const product = state.products.find(p => p.id === productId);
-    dispatch({ type: 'DELETE_PRODUCT', payload: productId });
-    
-    if (product) {
+    try {
+      if (!productId?.trim()) {
+        throw new Error('Product ID is required');
+      }
+
+      const product = state.products.find(p => p.id === productId);
+      if (!product) {
+        throw new Error('Product not found');
+      }
+
+      dispatch({ type: 'DELETE_PRODUCT', payload: productId });
+      
       addNotification({
         type: 'warning',
         title: 'Product Deleted',
         message: `${product.name} has been removed from the tracking system.`
       });
+    } catch (error) {
+      console.error('Error deleting product:', error);
+      addNotification({
+        type: 'error',
+        title: 'Failed to Delete Product',
+        message: error instanceof Error ? error.message : 'An unexpected error occurred'
+      });
+      throw error;
     }
   };
 

@@ -6,6 +6,7 @@ import { AddProductForm } from '@/components/AddProductForm';
 import { AdvancedFilters, FilterOptions } from '@/components/AdvancedFilters';
 import { BulkOperations } from '@/components/BulkOperations';
 import { useAppContext } from '@/contexts/AppContext';
+import { useErrorHandler } from '@/hooks/useErrorHandler';
 
 interface DashboardProps {
   onProductClick: (product: Product) => void;
@@ -16,6 +17,7 @@ interface DashboardProps {
 
 export function Dashboard({ onProductClick, onAnalyticsClick, onStationsClick, onRoutesClick }: DashboardProps) {
   const { state, addProduct } = useAppContext();
+  const { handleError } = useErrorHandler();
   const [searchTerm, setSearchTerm] = useState('');
   const [showAddForm, setShowAddForm] = useState(false);
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
@@ -284,20 +286,25 @@ export function Dashboard({ onProductClick, onAnalyticsClick, onStationsClick, o
         {showAddForm && (
           <AddProductForm
             onSubmit={(newProduct) => {
-              const productData = {
-                ...newProduct,
-                stationHistory: [{
-                  id: `history_${Date.now()}`,
-                  stationId: newProduct.currentStation,
-                  stationName: newProduct.route.stations[0]?.name || 'Unknown',
-                  owner: newProduct.route.stations[0]?.owner || 'Unassigned',
-                  startTime: new Date(),
-                  status: 'pending' as const,
-                  formData: {}
-                }]
-              };
-              addProduct(productData);
-              setShowAddForm(false);
+              try {
+                const productData = {
+                  ...newProduct,
+                  stationHistory: [{
+                    id: `history_${Date.now()}`,
+                    stationId: newProduct.currentStation,
+                    stationName: newProduct.route.stations[0]?.name || 'Unknown',
+                    owner: newProduct.route.stations[0]?.owner || 'Unassigned',
+                    startTime: new Date(),
+                    status: 'pending' as const,
+                    formData: {}
+                  }]
+                };
+                addProduct(productData);
+                setShowAddForm(false);
+              } catch (error) {
+                handleError(error as Error, 'Add Product Form');
+                // Keep form open so user can correct the error
+              }
             }}
             onCancel={() => setShowAddForm(false)}
           />
