@@ -1,17 +1,15 @@
-import React, { useState } from 'react';
 import { Dashboard } from './pages/Dashboard';
 import { ProductDetail } from './pages/ProductDetail';
 import { Analytics } from './pages/Analytics';
 import { StationManagement } from './pages/StationManagement';
 import { RouteManagement } from './pages/RouteManagement';
-import { mockProducts } from './services/mockData';
-import { Product } from './types';
+import { AppProvider, useAppContext } from './contexts/AppContext';
+import { NotificationCenter } from './components/NotificationCenter';
 
-function App() {
-  const [currentView, setCurrentView] = useState<'dashboard' | 'detail' | 'analytics' | 'stations' | 'routes'>('dashboard');
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+function AppContent() {
+  const { state, setCurrentView, setSelectedProduct } = useAppContext();
 
-  const handleProductClick = (product: Product) => {
+  const handleProductClick = (product: any) => {
     setSelectedProduct(product);
     setCurrentView('detail');
   };
@@ -34,8 +32,12 @@ function App() {
   };
 
   return (
-    <div className="App">
-      {currentView === 'dashboard' && (
+    <div className="App relative">
+      <div className="fixed top-4 right-4 z-50">
+        <NotificationCenter />
+      </div>
+      
+      {state.currentView === 'dashboard' && (
         <Dashboard 
           onProductClick={handleProductClick}
           onAnalyticsClick={handleAnalyticsClick}
@@ -43,22 +45,30 @@ function App() {
           onRoutesClick={handleRoutesClick}
         />
       )}
-      {currentView === 'detail' && selectedProduct && (
+      {state.currentView === 'detail' && state.selectedProduct && (
         <ProductDetail 
-          product={selectedProduct} 
+          product={state.selectedProduct} 
           onBack={handleBackToDashboard} 
         />
       )}
-      {currentView === 'analytics' && (
+      {state.currentView === 'analytics' && (
         <Analytics onBack={handleBackToDashboard} />
       )}
-      {currentView === 'stations' && (
+      {state.currentView === 'stations' && (
         <StationManagement onBack={handleBackToDashboard} />
       )}
-      {currentView === 'routes' && (
+      {state.currentView === 'routes' && (
         <RouteManagement onBack={handleBackToDashboard} />
       )}
     </div>
+  );
+}
+
+function App() {
+  return (
+    <AppProvider>
+      <AppContent />
+    </AppProvider>
   );
 }
 

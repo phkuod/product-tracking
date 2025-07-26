@@ -18,7 +18,10 @@
       "Bash(mkdir:*)",
       "Bash(start http://localhost:5173)",
       "Bash(cmd /c start http://localhost:5173)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(gh pr create:*)"
     ],
     "deny": []
   }

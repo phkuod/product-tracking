@@ -1,4 +1,3 @@
-import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { RouteProgress } from '@/components/RouteProgress';
@@ -65,7 +64,7 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
             <p className="text-gray-600 mt-1">Detailed product tracking information</p>
           </div>
           <Badge 
-            variant={product.status === "逾期" ? "error" : "success"}
+            variant={product.status === "overdue" ? "destructive" : "default"}
             className={getStatusColor(product.status)}
           >
             {getStatusLabel(product.status)}
