@@ -173,19 +173,19 @@ export function RouteManagement({ onBack }: RouteManagementProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6 theme-transition">
       <div className="max-w-7xl mx-auto space-y-6">
         <header className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <button
               onClick={onBack}
-              className="inline-flex items-center px-3 py-2 text-gray-600 hover:text-gray-900 transition-colors"
+              className="inline-flex items-center px-3 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors btn-touch focus-enhanced"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Dashboard
             </button>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Route Management</h1>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Route Management</h1>
               <p className="text-gray-600 mt-1">Design and manage manufacturing routes</p>
             </div>
           </div>
@@ -229,21 +229,21 @@ export function RouteManagement({ onBack }: RouteManagementProps) {
                     <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-2">
                       <Settings className="w-4 h-4 text-blue-600" />
                     </div>
-                    <p className="text-lg font-bold text-gray-900">{route.stations.length}</p>
+                    <p className="text-lg font-bold text-gray-900 dark:text-gray-100">{route.stations.length}</p>
                     <p className="text-xs text-gray-600">Stations</p>
                   </div>
                   <div className="text-center">
                     <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-2">
                       <Clock className="w-4 h-4 text-green-600" />
                     </div>
-                    <p className="text-lg font-bold text-gray-900">{getTotalDuration(route.stations)}</p>
+                    <p className="text-lg font-bold text-gray-900 dark:text-gray-100">{getTotalDuration(route.stations)}</p>
                     <p className="text-xs text-gray-600">Minutes</p>
                   </div>
                   <div className="text-center">
                     <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-2">
                       <Users className="w-4 h-4 text-purple-600" />
                     </div>
-                    <p className="text-lg font-bold text-gray-900">{getUniqueOwners(route.stations)}</p>
+                    <p className="text-lg font-bold text-gray-900 dark:text-gray-100">{getUniqueOwners(route.stations)}</p>
                     <p className="text-xs text-gray-600">Owners</p>
                   </div>
                 </div>

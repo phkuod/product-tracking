@@ -89,19 +89,19 @@ export function StationManagement({ onBack }: StationManagementProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6 theme-transition">
       <div className="max-w-6xl mx-auto space-y-6">
         <header className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <button
               onClick={onBack}
-              className="inline-flex items-center px-3 py-2 text-gray-600 hover:text-gray-900 transition-colors"
+              className="inline-flex items-center px-3 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors btn-touch focus-enhanced"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Dashboard
             </button>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Station Management</h1>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Station Management</h1>
               <p className="text-gray-600 mt-1">Define and manage manufacturing stations</p>
             </div>
           </div>
