@@ -134,7 +134,7 @@ export function Analytics({ onBack }: AnalyticsProps) {
                 <div>
                   <p className="text-sm text-gray-600 dark:text-gray-400">Avg Completion Time</p>
                   <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">{analytics.averageCompletionTime}h</p>
-                  <p className="text-sm text-gray-600 mt-1">Per product</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">Per product</p>
                 </div>
                 <div className="w-12 h-12 bg-yellow-100 dark:bg-yellow-900/20 rounded-full flex items-center justify-center">
                   <Clock className="w-6 h-6 text-yellow-600 dark:text-yellow-400" />
@@ -149,7 +149,7 @@ export function Analytics({ onBack }: AnalyticsProps) {
                 <div>
                   <p className="text-sm text-gray-600 dark:text-gray-400">Overdue Items</p>
                   <p className="text-3xl font-bold text-red-600 dark:text-red-400">{analytics.overdueProducts}</p>
-                  <p className="text-sm text-gray-600 mt-1">
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
                     {Math.round((analytics.overdueProducts / analytics.totalProducts) * 100)}% of total
                   </p>
                 </div>
@@ -276,7 +276,7 @@ export function Analytics({ onBack }: AnalyticsProps) {
               </div>
               <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">Normal Status</h3>
               <p className="text-3xl font-bold text-green-600 mb-1">{analytics.normalProducts}</p>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-gray-600 dark:text-gray-400">
                 {Math.round((analytics.normalProducts / analytics.totalProducts) * 100)}% of products
               </p>
             </CardContent>
@@ -289,7 +289,7 @@ export function Analytics({ onBack }: AnalyticsProps) {
               </div>
               <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">Overdue Items</h3>
               <p className="text-3xl font-bold text-red-600 mb-1">{analytics.overdueProducts}</p>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-gray-600 dark:text-gray-400">
                 {Math.round((analytics.overdueProducts / analytics.totalProducts) * 100)}% of products
               </p>
             </CardContent>
@@ -302,7 +302,7 @@ export function Analytics({ onBack }: AnalyticsProps) {
               </div>
               <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">In Progress</h3>
               <p className="text-3xl font-bold text-blue-600 mb-1">{analytics.inProgressProducts}</p>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-gray-600 dark:text-gray-400">
                 {Math.round((analytics.inProgressProducts / analytics.totalProducts) * 100)}% of products
               </p>
             </CardContent>
