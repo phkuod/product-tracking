@@ -182,9 +182,11 @@ gh pr create --title "Feature: Description" --body "Enhancement details" --base 
 # Install dependencies
 npm install
 
-# Stop any running development server (if needed)
-# Use Ctrl+C in the terminal running the server, or:
-# taskkill /f /im node.exe (kills all Node processes - use with caution)
+# Stop any running development server before starting (recommended)
+npx kill-port 5173 5174 5175 5176 5177 5178 5179
+
+# Alternative: Kill all Node processes (use with caution)
+# taskkill /f /im node.exe
 
 # Start development server
 npm run dev
@@ -202,16 +204,19 @@ npm run preview
 
 ### Development Server Management
 ```cmd
+# RECOMMENDED: Stop any running servers before starting
+npx kill-port 5173 5174 5175 5176 5177 5178 5179
+
 # Start development server
 npm run dev
 
-# Stop development server
-# Method 1: Press Ctrl+C in the terminal where server is running
+# Stop development server methods:
+# Method 1: Press Ctrl+C in the terminal where server is running (preferred)
 # Method 2: Close the terminal window
-# Method 3: Kill all Node processes (use carefully)
-taskkill /f /im node.exe
-# Method 4: Kill specific Vite ports (recommended)
+# Method 3: Kill specific Vite ports (recommended for cleanup)
 npx kill-port 5173 5174 5175 5176 5177 5178 5179
+# Method 4: Kill all Node processes (use with caution)
+taskkill /f /im node.exe
 
 # Check if specific port is in use
 netstat -ano | findstr :5173
