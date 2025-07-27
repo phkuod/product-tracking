@@ -278,12 +278,12 @@ export function BulkOperations({
       </div>
 
       {showUpdateForm && (
-        <div className="mt-4 p-4 bg-white rounded-lg border">
+        <div className="mt-4 p-4 card-enhanced rounded-lg">
           <div className="flex items-center justify-between mb-3">
-            <h4 className="font-medium text-gray-900">Bulk Update Options</h4>
+            <h4 className="font-medium text-gray-900 dark:text-gray-100">Bulk Update Options</h4>
             <button
               onClick={() => setShowUpdateForm(false)}
-              className="text-gray-400 hover:text-gray-600"
+              className="text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
             >
               <X className="w-4 h-4" />
             </button>

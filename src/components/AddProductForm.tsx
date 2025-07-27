@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { Product, Route } from '@/types';
+import { Product } from '@/types';
 import { mockRoutes } from '@/services/mockData';
 import { X, Plus } from 'lucide-react';
 
@@ -164,7 +164,7 @@ export function AddProductForm({ onSubmit, onCancel }: AddProductFormProps) {
                               key={station.id}
                               className="flex items-center space-x-2 bg-white rounded-lg px-3 py-2 border"
                             >
-                              <span className="w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-xs font-medium">
+                              <span className="w-6 h-6 bg-blue-100 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded-full flex items-center justify-center text-xs font-medium">
                                 {index + 1}
                               </span>
                               <span className="text-sm font-medium">{station.name}</span>

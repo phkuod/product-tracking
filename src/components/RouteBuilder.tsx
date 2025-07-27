@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Route, Station } from '@/types';
 import { X, Plus, Trash2, ArrowRight, ArrowUp, ArrowDown, Clock, User } from 'lucide-react';
@@ -68,14 +67,14 @@ export function RouteBuilder({ route, availableStations, onSave, onCancel }: Rou
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-2xl shadow-xl max-w-6xl w-full max-h-[90vh] overflow-y-auto">
-        <div className="sticky top-0 bg-white border-b px-6 py-4 flex items-center justify-between">
-          <h2 className="text-xl font-bold">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl max-w-6xl w-full max-h-[90vh] overflow-y-auto theme-transition">
+        <div className="sticky top-0 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4 flex items-center justify-between">
+          <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">
             {route ? 'Edit Route' : 'Create New Route'}
           </h2>
           <button
             onClick={onCancel}
-            className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
+            className="p-2 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors btn-touch"
           >
             <X className="w-5 h-5" />
           </button>
@@ -85,30 +84,30 @@ export function RouteBuilder({ route, availableStations, onSave, onCancel }: Rou
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <div className="space-y-6">
               <div>
-                <h3 className="text-lg font-medium text-gray-900 mb-4">Route Information</h3>
+                <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">Route Information</h3>
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Route Name *
                     </label>
                     <input
                       type="text"
                       value={formData.name}
                       onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       placeholder="Enter route name"
                       required
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Description
                     </label>
                     <textarea
                       value={formData.description}
                       onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       placeholder="Enter route description"
                       rows={3}
                     />
@@ -117,7 +116,7 @@ export function RouteBuilder({ route, availableStations, onSave, onCancel }: Rou
               </div>
 
               <div>
-                <h3 className="text-lg font-medium text-gray-900 mb-4">Available Stations</h3>
+                <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">Available Stations</h3>
                 <div className="space-y-3 max-h-96 overflow-y-auto">
                   {availableStations.map(station => {
                     const isAdded = formData.stations.find(s => s.id === station.id);
@@ -126,15 +125,15 @@ export function RouteBuilder({ route, availableStations, onSave, onCancel }: Rou
                         key={station.id}
                         className={`p-4 border rounded-lg transition-colors ${
                           isAdded 
-                            ? 'border-green-200 bg-green-50' 
-                            : 'border-gray-200 hover:border-blue-300 hover:bg-blue-50 cursor-pointer'
+                            ? 'border-green-200 dark:border-green-700 bg-green-50 dark:bg-green-900/20' 
+                            : 'border-gray-200 dark:border-gray-600 hover:border-blue-300 dark:hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 cursor-pointer'
                         }`}
                         onClick={() => !isAdded && addStation(station)}
                       >
                         <div className="flex items-center justify-between">
                           <div className="flex-1">
-                            <h4 className="font-medium text-gray-900">{station.name}</h4>
-                            <div className="flex items-center space-x-4 mt-1 text-sm text-gray-600">
+                            <h4 className="font-medium text-gray-900 dark:text-gray-100">{station.name}</h4>
+                            <div className="flex items-center space-x-4 mt-1 text-sm text-gray-600 dark:text-gray-400">
                               <div className="flex items-center space-x-1">
                                 <User className="w-3 h-3" />
                                 <span>{station.owner}</span>
@@ -155,7 +154,7 @@ export function RouteBuilder({ route, availableStations, onSave, onCancel }: Rou
                           ) : (
                             <button
                               type="button"
-                              className="p-1 text-blue-600 hover:text-blue-700 transition-colors"
+                              className="p-1 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
                             >
                               <Plus className="w-4 h-4" />
                             </button>
@@ -170,22 +169,22 @@ export function RouteBuilder({ route, availableStations, onSave, onCancel }: Rou
 
             <div className="space-y-6">
               <div>
-                <h3 className="text-lg font-medium text-gray-900 mb-4">Route Flow</h3>
+                <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">Route Flow</h3>
                 
                 {formData.stations.length > 0 && (
-                  <div className="mb-4 p-4 bg-blue-50 rounded-lg">
+                  <div className="mb-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
                     <div className="grid grid-cols-3 gap-4 text-center">
                       <div>
-                        <p className="text-2xl font-bold text-blue-600">{formData.stations.length}</p>
-                        <p className="text-sm text-gray-600">Stations</p>
+                        <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{formData.stations.length}</p>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">Stations</p>
                       </div>
                       <div>
-                        <p className="text-2xl font-bold text-blue-600">{getTotalDuration()}</p>
-                        <p className="text-sm text-gray-600">Total Minutes</p>
+                        <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{getTotalDuration()}</p>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">Total Minutes</p>
                       </div>
                       <div>
-                        <p className="text-2xl font-bold text-blue-600">{getUniqueOwners().length}</p>
-                        <p className="text-sm text-gray-600">Unique Owners</p>
+                        <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{getUniqueOwners().length}</p>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">Unique Owners</p>
                       </div>
                     </div>
                   </div>
@@ -193,9 +192,9 @@ export function RouteBuilder({ route, availableStations, onSave, onCancel }: Rou
 
                 <div className="space-y-3">
                   {formData.stations.length === 0 ? (
-                    <div className="text-center py-12 text-gray-500">
-                      <div className="w-16 h-16 mx-auto bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                        <Plus className="w-6 h-6 text-gray-400" />
+                    <div className="text-center py-12 text-gray-500 dark:text-gray-400">
+                      <div className="w-16 h-16 mx-auto bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mb-4">
+                        <Plus className="w-6 h-6 text-gray-400 dark:text-gray-500" />
                       </div>
                       <p className="font-medium">No stations added yet</p>
                       <p className="text-sm">Select stations from the left panel to build your route</p>
@@ -203,14 +202,14 @@ export function RouteBuilder({ route, availableStations, onSave, onCancel }: Rou
                   ) : (
                     formData.stations.map((station, index) => (
                       <div key={station.id} className="relative">
-                        <div className="flex items-center space-x-3 p-4 bg-white border border-gray-200 rounded-lg">
-                          <div className="flex-shrink-0 w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-sm font-medium text-blue-700">
+                        <div className="flex items-center space-x-3 p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg">
+                          <div className="flex-shrink-0 w-8 h-8 bg-blue-100 dark:bg-blue-900/20 rounded-full flex items-center justify-center text-sm font-medium text-blue-700 dark:text-blue-400">
                             {index + 1}
                           </div>
                           
                           <div className="flex-1">
-                            <h4 className="font-medium text-gray-900">{station.name}</h4>
-                            <div className="flex items-center space-x-4 mt-1 text-sm text-gray-600">
+                            <h4 className="font-medium text-gray-900 dark:text-gray-100">{station.name}</h4>
+                            <div className="flex items-center space-x-4 mt-1 text-sm text-gray-600 dark:text-gray-400">
                               <div className="flex items-center space-x-1">
                                 <User className="w-3 h-3" />
                                 <span>{station.owner}</span>
@@ -230,7 +229,7 @@ export function RouteBuilder({ route, availableStations, onSave, onCancel }: Rou
                               type="button"
                               onClick={() => moveStation(station.id, 'up')}
                               disabled={index === 0}
-                              className="p-1 text-gray-400 hover:text-gray-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                              className="p-1 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
                             >
                               <ArrowUp className="w-4 h-4" />
                             </button>
@@ -238,14 +237,14 @@ export function RouteBuilder({ route, availableStations, onSave, onCancel }: Rou
                               type="button"
                               onClick={() => moveStation(station.id, 'down')}
                               disabled={index === formData.stations.length - 1}
-                              className="p-1 text-gray-400 hover:text-gray-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                              className="p-1 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
                             >
                               <ArrowDown className="w-4 h-4" />
                             </button>
                             <button
                               type="button"
                               onClick={() => removeStation(station.id)}
-                              className="p-1 text-red-500 hover:text-red-700 transition-colors"
+                              className="p-1 text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 transition-colors"
                             >
                               <Trash2 className="w-4 h-4" />
                             </button>
@@ -254,7 +253,7 @@ export function RouteBuilder({ route, availableStations, onSave, onCancel }: Rou
 
                         {index < formData.stations.length - 1 && (
                           <div className="flex justify-center py-2">
-                            <ArrowRight className="w-5 h-5 text-gray-400" />
+                            <ArrowRight className="w-5 h-5 text-gray-400 dark:text-gray-500" />
                           </div>
                         )}
                       </div>
@@ -265,7 +264,7 @@ export function RouteBuilder({ route, availableStations, onSave, onCancel }: Rou
 
               {getUniqueOwners().length > 0 && (
                 <div>
-                  <h4 className="text-sm font-medium text-gray-700 mb-3">Route Owners</h4>
+                  <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Route Owners</h4>
                   <div className="flex flex-wrap gap-2">
                     {getUniqueOwners().map(owner => (
                       <Badge key={owner} variant="secondary" className="text-sm">
@@ -278,17 +277,17 @@ export function RouteBuilder({ route, availableStations, onSave, onCancel }: Rou
             </div>
           </div>
 
-          <div className="flex justify-end space-x-3 pt-6 border-t mt-8">
+          <div className="flex justify-end space-x-3 pt-6 border-t border-gray-200 dark:border-gray-700 mt-8">
             <button
               type="button"
               onClick={onCancel}
-              className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+              className="px-4 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              className="px-4 py-2 bg-blue-600 dark:bg-blue-500 text-white rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors"
             >
               {route ? 'Update Route' : 'Create Route'}
             </button>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Route, Station } from '@/types';
@@ -173,25 +173,25 @@ export function RouteManagement({ onBack }: RouteManagementProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6 theme-transition">
       <div className="max-w-7xl mx-auto space-y-6">
         <header className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <button
               onClick={onBack}
-              className="inline-flex items-center px-3 py-2 text-gray-600 hover:text-gray-900 transition-colors"
+              className="inline-flex items-center px-3 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors btn-touch focus-enhanced"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Dashboard
             </button>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Route Management</h1>
-              <p className="text-gray-600 mt-1">Design and manage manufacturing routes</p>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Route Management</h1>
+              <p className="text-gray-600 dark:text-gray-400 mt-1">Design and manage manufacturing routes</p>
             </div>
           </div>
           <button
             onClick={handleAddRoute}
-            className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            className="inline-flex items-center px-4 py-2 bg-blue-600 dark:bg-blue-500 text-white rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors btn-touch focus-enhanced"
           >
             <Plus className="w-4 h-4 mr-2" />
             Create Route
@@ -200,23 +200,23 @@ export function RouteManagement({ onBack }: RouteManagementProps) {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {routes.map(route => (
-            <Card key={route.id} className="rounded-2xl hover:shadow-lg transition-shadow">
+            <Card key={route.id} className="card-enhanced rounded-2xl hover:shadow-lg transition-shadow animate-scale-in">
               <CardHeader className="pb-4">
                 <div className="flex items-center justify-between">
                   <div>
                     <CardTitle className="text-xl">{route.name}</CardTitle>
-                    <p className="text-sm text-gray-600 mt-1">{route.description}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{route.description}</p>
                   </div>
                   <div className="flex space-x-1">
                     <button
                       onClick={() => handleEditRoute(route)}
-                      className="p-2 text-gray-400 hover:text-blue-600 transition-colors"
+                      className="p-2 text-gray-400 dark:text-gray-500 hover:text-blue-600 dark:hover:text-blue-400 transition-colors btn-touch"
                     >
                       <Edit className="w-4 h-4" />
                     </button>
                     <button
                       onClick={() => handleDeleteRoute(route.id)}
-                      className="p-2 text-gray-400 hover:text-red-600 transition-colors"
+                      className="p-2 text-gray-400 dark:text-gray-500 hover:text-red-600 dark:hover:text-red-400 transition-colors btn-touch"
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -226,43 +226,43 @@ export function RouteManagement({ onBack }: RouteManagementProps) {
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-3 gap-4">
                   <div className="text-center">
-                    <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                      <Settings className="w-4 h-4 text-blue-600" />
+                    <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/20 rounded-full flex items-center justify-center mx-auto mb-2">
+                      <Settings className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                     </div>
-                    <p className="text-lg font-bold text-gray-900">{route.stations.length}</p>
-                    <p className="text-xs text-gray-600">Stations</p>
+                    <p className="text-lg font-bold text-gray-900 dark:text-gray-100">{route.stations.length}</p>
+                    <p className="text-xs text-gray-600 dark:text-gray-400">Stations</p>
                   </div>
                   <div className="text-center">
-                    <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                      <Clock className="w-4 h-4 text-green-600" />
+                    <div className="w-8 h-8 bg-green-100 dark:bg-green-900/20 rounded-full flex items-center justify-center mx-auto mb-2">
+                      <Clock className="w-4 h-4 text-green-600 dark:text-green-400" />
                     </div>
-                    <p className="text-lg font-bold text-gray-900">{getTotalDuration(route.stations)}</p>
-                    <p className="text-xs text-gray-600">Minutes</p>
+                    <p className="text-lg font-bold text-gray-900 dark:text-gray-100">{getTotalDuration(route.stations)}</p>
+                    <p className="text-xs text-gray-600 dark:text-gray-400">Minutes</p>
                   </div>
                   <div className="text-center">
-                    <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                      <Users className="w-4 h-4 text-purple-600" />
+                    <div className="w-8 h-8 bg-purple-100 dark:bg-purple-900/20 rounded-full flex items-center justify-center mx-auto mb-2">
+                      <Users className="w-4 h-4 text-purple-600 dark:text-purple-400" />
                     </div>
-                    <p className="text-lg font-bold text-gray-900">{getUniqueOwners(route.stations)}</p>
-                    <p className="text-xs text-gray-600">Owners</p>
+                    <p className="text-lg font-bold text-gray-900 dark:text-gray-100">{getUniqueOwners(route.stations)}</p>
+                    <p className="text-xs text-gray-600 dark:text-gray-400">Owners</p>
                   </div>
                 </div>
 
                 <div>
-                  <p className="text-sm font-medium text-gray-700 mb-3">Station Flow</p>
+                  <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Station Flow</p>
                   <div className="space-y-2">
                     {route.stations.map((station, index) => (
                       <div key={station.id} className="flex items-center space-x-3">
-                        <div className="flex-shrink-0 w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center text-xs font-medium text-blue-700">
+                        <div className="flex-shrink-0 w-6 h-6 bg-blue-100 dark:bg-blue-900/20 rounded-full flex items-center justify-center text-xs font-medium text-blue-700 dark:text-blue-400">
                           {index + 1}
                         </div>
-                        <div className="flex-1 flex items-center justify-between py-2 px-3 bg-gray-50 rounded-lg">
+                        <div className="flex-1 flex items-center justify-between py-2 px-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
                           <div>
-                            <p className="font-medium text-sm">{station.name}</p>
-                            <p className="text-xs text-gray-600">{station.owner}</p>
+                            <p className="font-medium text-sm text-gray-900 dark:text-gray-100">{station.name}</p>
+                            <p className="text-xs text-gray-600 dark:text-gray-400">{station.owner}</p>
                           </div>
                           <div className="text-right">
-                            <p className="text-sm font-medium">{station.estimatedDuration}min</p>
+                            <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{station.estimatedDuration}min</p>
                             <Badge variant="outline" className="text-xs">
                               {station.fields.length} fields
                             </Badge>
@@ -280,16 +280,16 @@ export function RouteManagement({ onBack }: RouteManagementProps) {
           ))}
 
           <Card 
-            className="rounded-2xl border-2 border-dashed border-gray-300 bg-gray-50 hover:border-blue-400 hover:bg-blue-50 transition-colors cursor-pointer" 
+            className="rounded-2xl border-2 border-dashed border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800/50 hover:border-blue-400 dark:hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors cursor-pointer" 
             onClick={handleAddRoute}
           >
             <CardContent className="flex flex-col items-center justify-center h-80 space-y-4">
-              <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">
-                <Plus className="w-6 h-6 text-gray-400" />
+              <div className="w-12 h-12 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center">
+                <Plus className="w-6 h-6 text-gray-400 dark:text-gray-500" />
               </div>
               <div className="text-center">
-                <p className="font-medium text-gray-600">Create New Route</p>
-                <p className="text-sm text-gray-500">Design a custom manufacturing flow</p>
+                <p className="font-medium text-gray-600 dark:text-gray-300">Create New Route</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">Design a custom manufacturing flow</p>
               </div>
             </CardContent>
           </Card>

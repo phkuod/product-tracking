@@ -61,13 +61,13 @@ export function AdvancedFilters({ filters, onFiltersChange, onReset }: AdvancedF
     filters.station !== '';
 
   return (
-    <div className="bg-white rounded-lg border p-4 space-y-4">
+    <div className="card-enhanced rounded-xl sm:rounded-2xl p-4 sm:p-6 space-y-4 animate-slide-in">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-2">
-          <Filter className="w-4 h-4 text-gray-500" />
-          <span className="font-medium text-gray-900">Filters</span>
+          <Filter className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+          <span className="font-medium text-gray-900 dark:text-gray-100">Filters</span>
           {hasActiveFilters && (
-            <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">
+            <span className="status-info text-xs px-2 py-1 rounded-full">
               Active
             </span>
           )}
@@ -99,34 +99,34 @@ export function AdvancedFilters({ filters, onFiltersChange, onReset }: AdvancedF
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Status Filter */}
         <div>
-          <Label htmlFor="status-filter">Status</Label>
+          <Label htmlFor="status-filter" className="text-gray-700 dark:text-gray-300">Status</Label>
           <div className="flex space-x-2 mt-1">
             <button
               onClick={() => updateFilter('status', 'all')}
-              className={`px-3 py-1 rounded-full text-sm transition-colors ${
+              className={`px-3 py-1 rounded-full text-sm transition-colors btn-touch ${
                 filters.status === 'all' 
-                  ? 'bg-blue-100 text-blue-800' 
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  ? 'status-info' 
+                  : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
               }`}
             >
               All
             </button>
             <button
               onClick={() => updateFilter('status', 'normal')}
-              className={`px-3 py-1 rounded-full text-sm transition-colors ${
+              className={`px-3 py-1 rounded-full text-sm transition-colors btn-touch ${
                 filters.status === 'normal' 
-                  ? 'bg-green-100 text-green-800' 
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  ? 'status-normal' 
+                  : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
               }`}
             >
               Normal
             </button>
             <button
               onClick={() => updateFilter('status', 'overdue')}
-              className={`px-3 py-1 rounded-full text-sm transition-colors ${
+              className={`px-3 py-1 rounded-full text-sm transition-colors btn-touch ${
                 filters.status === 'overdue' 
-                  ? 'bg-red-100 text-red-800' 
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  ? 'status-overdue' 
+                  : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
               }`}
             >
               Overdue
@@ -163,17 +163,17 @@ export function AdvancedFilters({ filters, onFiltersChange, onReset }: AdvancedF
               className="w-20 text-sm"
               placeholder="Max"
             />
-            <span className="text-xs text-gray-500">%</span>
+            <span className="text-xs text-gray-500 dark:text-gray-400">%</span>
           </div>
         </div>
 
         {/* Owner Filter */}
         <div>
-          <Label htmlFor="owner-filter">Owner</Label>
+          <Label htmlFor="owner-filter" className="text-gray-700 dark:text-gray-300">Owner</Label>
           <select
             value={filters.owner}
             onChange={(e) => updateFilter('owner', e.target.value)}
-            className="w-full mt-1 px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="w-full mt-1 px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-md text-sm focus-enhanced theme-transition"
           >
             <option value="">All Owners</option>
             {allOwners.map(owner => (
@@ -185,11 +185,11 @@ export function AdvancedFilters({ filters, onFiltersChange, onReset }: AdvancedF
 
       {/* Advanced Filters */}
       {showAdvanced && (
-        <div className="border-t pt-4 space-y-4">
+        <div className="border-t border-gray-200 dark:border-gray-700 pt-4 space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* Date Range Filter */}
             <div className="md:col-span-2">
-              <Label>Date Range</Label>
+              <Label className="text-gray-700 dark:text-gray-300">Date Range</Label>
               <div className="flex items-center space-x-2 mt-1">
                 <div className="flex-1">
                   <Input
@@ -202,7 +202,7 @@ export function AdvancedFilters({ filters, onFiltersChange, onReset }: AdvancedF
                     className="text-sm"
                   />
                 </div>
-                <span className="text-gray-500">to</span>
+                <span className="text-gray-500 dark:text-gray-400">to</span>
                 <div className="flex-1">
                   <Input
                     type="date"
@@ -219,11 +219,11 @@ export function AdvancedFilters({ filters, onFiltersChange, onReset }: AdvancedF
 
             {/* Route Filter */}
             <div>
-              <Label htmlFor="route-filter">Route</Label>
+              <Label htmlFor="route-filter" className="text-gray-700 dark:text-gray-300">Route</Label>
               <select
                 value={filters.route}
                 onChange={(e) => updateFilter('route', e.target.value)}
-                className="w-full mt-1 px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full mt-1 px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-md text-sm focus-enhanced theme-transition"
               >
                 <option value="">All Routes</option>
                 {allRoutes.map(route => (
@@ -236,11 +236,11 @@ export function AdvancedFilters({ filters, onFiltersChange, onReset }: AdvancedF
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* Current Station Filter */}
             <div>
-              <Label htmlFor="station-filter">Current Station</Label>
+              <Label htmlFor="station-filter" className="text-gray-700 dark:text-gray-300">Current Station</Label>
               <select
                 value={filters.station}
                 onChange={(e) => updateFilter('station', e.target.value)}
-                className="w-full mt-1 px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full mt-1 px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-md text-sm focus-enhanced theme-transition"
               >
                 <option value="">All Stations</option>
                 {allStations.map(station => (

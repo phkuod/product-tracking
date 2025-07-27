@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Station, Field } from '@/types';
-import { Plus, Edit, Trash2, Settings, ArrowLeft, Clock, User } from 'lucide-react';
+import { Plus, Edit, Trash2, ArrowLeft, Clock, User } from 'lucide-react';
 import { StationForm } from '@/components/StationForm';
 
 interface StationManagementProps {
@@ -89,25 +89,25 @@ export function StationManagement({ onBack }: StationManagementProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6 theme-transition">
       <div className="max-w-6xl mx-auto space-y-6">
         <header className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <button
               onClick={onBack}
-              className="inline-flex items-center px-3 py-2 text-gray-600 hover:text-gray-900 transition-colors"
+              className="inline-flex items-center px-3 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors btn-touch focus-enhanced"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Dashboard
             </button>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Station Management</h1>
-              <p className="text-gray-600 mt-1">Define and manage manufacturing stations</p>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Station Management</h1>
+              <p className="text-gray-600 dark:text-gray-400 mt-1">Define and manage manufacturing stations</p>
             </div>
           </div>
           <button
             onClick={handleAddStation}
-            className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            className="inline-flex items-center px-4 py-2 bg-blue-600 dark:bg-blue-500 text-white rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors btn-touch focus-enhanced"
           >
             <Plus className="w-4 h-4 mr-2" />
             Add Station
@@ -116,20 +116,20 @@ export function StationManagement({ onBack }: StationManagementProps) {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {stations.map(station => (
-            <Card key={station.id} className="rounded-2xl hover:shadow-lg transition-shadow">
+            <Card key={station.id} className="card-enhanced rounded-2xl hover:shadow-lg transition-shadow animate-scale-in">
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
                   <CardTitle className="text-lg">{station.name}</CardTitle>
                   <div className="flex space-x-1">
                     <button
                       onClick={() => handleEditStation(station)}
-                      className="p-1 text-gray-400 hover:text-blue-600 transition-colors"
+                      className="p-1 text-gray-400 dark:text-gray-500 hover:text-blue-600 dark:hover:text-blue-400 transition-colors btn-touch"
                     >
                       <Edit className="w-4 h-4" />
                     </button>
                     <button
                       onClick={() => handleDeleteStation(station.id)}
-                      className="p-1 text-gray-400 hover:text-red-600 transition-colors"
+                      className="p-1 text-gray-400 dark:text-gray-500 hover:text-red-600 dark:hover:text-red-400 transition-colors btn-touch"
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -138,21 +138,21 @@ export function StationManagement({ onBack }: StationManagementProps) {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                    <User className="w-4 h-4 text-blue-600" />
+                  <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/20 rounded-full flex items-center justify-center">
+                    <User className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">Owner</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Owner</p>
                     <p className="font-medium">{station.owner}</p>
                   </div>
                 </div>
 
                 <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                    <Clock className="w-4 h-4 text-green-600" />
+                  <div className="w-8 h-8 bg-green-100 dark:bg-green-900/20 rounded-full flex items-center justify-center">
+                    <Clock className="w-4 h-4 text-green-600 dark:text-green-400" />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">Estimated Duration</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Estimated Duration</p>
                     <p className="font-medium">{station.estimatedDuration} minutes</p>
                   </div>
                 </div>
@@ -168,8 +168,8 @@ export function StationManagement({ onBack }: StationManagementProps) {
                   <p className="text-sm text-gray-600 mb-2">Fields ({station.fields.length})</p>
                   <div className="space-y-2">
                     {station.fields.slice(0, 3).map(field => (
-                      <div key={field.id} className="flex items-center justify-between text-xs bg-gray-50 p-2 rounded">
-                        <span className="font-medium">{field.name}</span>
+                      <div key={field.id} className="flex items-center justify-between text-xs bg-gray-50 dark:bg-gray-800/50 p-2 rounded">
+                        <span className="font-medium text-gray-900 dark:text-gray-100">{field.name}</span>
                         <div className="flex space-x-1">
                           <Badge variant="outline" className="text-xs">
                             {getFieldTypeLabel(field.type)}
@@ -183,7 +183,7 @@ export function StationManagement({ onBack }: StationManagementProps) {
                       </div>
                     ))}
                     {station.fields.length > 3 && (
-                      <p className="text-xs text-gray-500 text-center">
+                      <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
                         +{station.fields.length - 3} more fields
                       </p>
                     )}
@@ -193,14 +193,14 @@ export function StationManagement({ onBack }: StationManagementProps) {
             </Card>
           ))}
 
-          <Card className="rounded-2xl border-2 border-dashed border-gray-300 bg-gray-50 hover:border-blue-400 hover:bg-blue-50 transition-colors cursor-pointer" onClick={handleAddStation}>
+          <Card className="rounded-2xl border-2 border-dashed border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800/50 hover:border-blue-400 dark:hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors cursor-pointer" onClick={handleAddStation}>
             <CardContent className="flex flex-col items-center justify-center h-64 space-y-4">
-              <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">
-                <Plus className="w-6 h-6 text-gray-400" />
+              <div className="w-12 h-12 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center">
+                <Plus className="w-6 h-6 text-gray-400 dark:text-gray-500" />
               </div>
               <div className="text-center">
-                <p className="font-medium text-gray-600">Add New Station</p>
-                <p className="text-sm text-gray-500">Define a new manufacturing station</p>
+                <p className="font-medium text-gray-600 dark:text-gray-300">Add New Station</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">Define a new manufacturing station</p>
               </div>
             </CardContent>
           </Card>

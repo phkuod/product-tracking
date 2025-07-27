@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Station, Field } from '@/types';
-import { X, Plus, Trash2, Settings } from 'lucide-react';
+import { X, Plus, Trash2 } from 'lucide-react';
 
 interface StationFormProps {
   station?: Station | null;
@@ -100,14 +100,14 @@ export function StationForm({ station, onSave, onCancel }: StationFormProps) {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-2xl shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-        <div className="sticky top-0 bg-white border-b px-6 py-4 flex items-center justify-between">
-          <h2 className="text-xl font-bold">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto theme-transition">
+        <div className="sticky top-0 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4 flex items-center justify-between">
+          <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">
             {station ? 'Edit Station' : 'Add New Station'}
           </h2>
           <button
             onClick={onCancel}
-            className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
+            className="p-2 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors btn-touch"
           >
             <X className="w-5 h-5" />
           </button>
@@ -116,54 +116,54 @@ export function StationForm({ station, onSave, onCancel }: StationFormProps) {
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Station Name *
               </label>
               <input
                 type="text"
                 value={formData.name}
                 onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 placeholder="Enter station name"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Owner *
               </label>
               <input
                 type="text"
                 value={formData.owner}
                 onChange={(e) => setFormData(prev => ({ ...prev, owner: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 placeholder="Enter owner name"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Estimated Duration (minutes)
               </label>
               <input
                 type="number"
                 value={formData.estimatedDuration}
                 onChange={(e) => setFormData(prev => ({ ...prev, estimatedDuration: parseInt(e.target.value) || 0 }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 min="1"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Completion Rule
               </label>
               <select
                 value={formData.completionRule}
                 onChange={(e) => setFormData(prev => ({ ...prev, completionRule: e.target.value as Station['completionRule'] }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               >
                 <option value="all_filled">All Fields Required</option>
                 <option value="custom">Custom Logic</option>
@@ -172,15 +172,15 @@ export function StationForm({ station, onSave, onCancel }: StationFormProps) {
           </div>
 
           <div>
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Station Fields</h3>
+            <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">Station Fields</h3>
             
             {formData.fields.length > 0 && (
               <div className="space-y-3 mb-6">
                 {formData.fields.map(field => (
-                  <div key={field.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <div key={field.id} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
                     <div className="flex-1">
                       <div className="flex items-center space-x-3">
-                        <span className="font-medium">{field.name}</span>
+                        <span className="font-medium text-gray-900 dark:text-gray-100">{field.name}</span>
                         <Badge variant="outline">
                           {fieldTypes.find(t => t.value === field.type)?.label}
                         </Badge>
@@ -215,26 +215,26 @@ export function StationForm({ station, onSave, onCancel }: StationFormProps) {
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                       Field Name
                     </label>
                     <input
                       type="text"
                       value={newField.name}
                       onChange={(e) => setNewField(prev => ({ ...prev, name: e.target.value }))}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       placeholder="Enter field name"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                       Field Type
                     </label>
                     <select
                       value={newField.type}
                       onChange={(e) => setNewField(prev => ({ ...prev, type: e.target.value as Field['type'] }))}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     >
                       {fieldTypes.map(type => (
                         <option key={type.value} value={type.value}>
@@ -252,14 +252,14 @@ export function StationForm({ station, onSave, onCancel }: StationFormProps) {
                         onChange={(e) => setNewField(prev => ({ ...prev, required: e.target.checked }))}
                         className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                       />
-                      <span className="text-sm text-gray-700">Required</span>
+                      <span className="text-sm text-gray-700 dark:text-gray-300">Required</span>
                     </label>
                   </div>
                 </div>
 
                 {newField.type === 'select' && (
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Dropdown Options
                     </label>
                     <div className="space-y-2">
@@ -269,13 +269,13 @@ export function StationForm({ station, onSave, onCancel }: StationFormProps) {
                             type="text"
                             value={option}
                             onChange={(e) => handleFieldOptionChange(index, e.target.value)}
-                            className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                             placeholder={`Option ${index + 1}`}
                           />
                           <button
                             type="button"
                             onClick={() => removeFieldOption(index)}
-                            className="p-2 text-red-500 hover:text-red-700 transition-colors"
+                            className="p-2 text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 transition-colors"
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>
@@ -284,7 +284,7 @@ export function StationForm({ station, onSave, onCancel }: StationFormProps) {
                       <button
                         type="button"
                         onClick={addFieldOption}
-                        className="inline-flex items-center px-3 py-2 text-blue-600 hover:text-blue-700 transition-colors"
+                        className="inline-flex items-center px-3 py-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
                       >
                         <Plus className="w-4 h-4 mr-1" />
                         Add Option
@@ -296,7 +296,7 @@ export function StationForm({ station, onSave, onCancel }: StationFormProps) {
                 <button
                   type="button"
                   onClick={handleAddField}
-                  className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                  className="inline-flex items-center px-4 py-2 bg-blue-600 dark:bg-blue-500 text-white rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors"
                 >
                   <Plus className="w-4 h-4 mr-2" />
                   Add Field
@@ -305,17 +305,17 @@ export function StationForm({ station, onSave, onCancel }: StationFormProps) {
             </Card>
           </div>
 
-          <div className="flex justify-end space-x-3 pt-6 border-t">
+          <div className="flex justify-end space-x-3 pt-6 border-t border-gray-200 dark:border-gray-700">
             <button
               type="button"
               onClick={onCancel}
-              className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+              className="px-4 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              className="px-4 py-2 bg-blue-600 dark:bg-blue-500 text-white rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors"
             >
               {station ? 'Update Station' : 'Create Station'}
             </button>
