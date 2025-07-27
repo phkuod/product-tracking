@@ -57,8 +57,8 @@ function NotificationItem({ notification, onMarkRead }: NotificationItemProps) {
   return (
     <div
       className={`p-4 border-l-4 ${getBorderColor()} ${
-        notification.read ? 'bg-gray-50' : 'bg-white'
-      } hover:bg-gray-50 transition-colors cursor-pointer`}
+        notification.read ? 'bg-gray-50 dark:bg-gray-800' : 'bg-white dark:bg-gray-800'
+      } hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer`}
       onClick={() => !notification.read && onMarkRead(notification.id)}
     >
       <div className="flex items-start space-x-3">
@@ -139,10 +139,10 @@ export function NotificationCenter() {
             className="fixed inset-0 z-40" 
             onClick={() => setIsOpen(false)}
           />
-          <div className="absolute right-0 mt-2 w-96 bg-white rounded-lg shadow-lg border z-50 max-h-96 overflow-hidden">
-            <div className="p-4 border-b border-gray-200">
+          <div className="absolute right-0 mt-2 w-96 card-enhanced rounded-lg shadow-lg z-50 max-h-96 overflow-hidden">
+            <div className="p-4 border-b border-gray-200 dark:border-gray-700">
               <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold text-gray-900">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                   Notifications
                   {unreadCount > 0 && (
                     <Badge variant="secondary" className="ml-2">
