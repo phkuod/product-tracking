@@ -102,6 +102,37 @@
     @apply min-h-[44px] min-w-[44px] touch-manipulation;
   }
   
+  /* Mobile-specific improvements */
+  @media (max-width: 640px) {
+    .mobile-padding {
+      @apply px-4 py-3;
+    }
+    
+    .mobile-text {
+      @apply text-sm;
+    }
+    
+    .mobile-grid {
+      @apply grid-cols-1;
+    }
+  }
+  
+  /* Touch feedback for interactive elements */
+  .touch-feedback {
+    @apply active:scale-95 transition-transform duration-75;
+  }
+  
+  /* Mobile-friendly modal positioning */
+  .mobile-modal {
+    @apply fixed inset-x-4 top-4 bottom-4 rounded-lg;
+  }
+  
+  @media (min-width: 640px) {
+    .mobile-modal {
+      @apply relative inset-auto top-auto bottom-auto rounded-xl;
+    }
+  }
+  
   /* Focus styles for accessibility */
   .focus-enhanced {
     @apply focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-blue-400 dark:focus:ring-offset-gray-800;
@@ -154,6 +185,10 @@
     animation: scaleIn 0.2s ease-out;
   }
   
+  .animate-slide-down {
+    animation: slideDown 0.2s ease-out;
+  }
+  
   @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
@@ -167,6 +202,11 @@
   @keyframes scaleIn {
     from { transform: scale(0.95); opacity: 0; }
     to { transform: scale(1); opacity: 1; }
+  }
+  
+  @keyframes slideDown {
+    from { transform: translateY(-10px); opacity: 0; max-height: 0; }
+    to { transform: translateY(0); opacity: 1; max-height: 200px; }
   }
   
   /* Pulse animation for loading states */
