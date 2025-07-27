@@ -174,7 +174,7 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
 
                           {entry.formData && Object.keys(entry.formData).length > 0 && (
                             <div className="mt-3 pt-3 border-t border-gray-200">
-                              <p className="text-sm font-medium text-gray-700 mb-2">Form Data:</p>
+                              <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Form Data:</p>
                               <div className="grid grid-cols-2 gap-2 text-xs">
                                 {Object.entries(entry.formData).map(([key, value]) => (
                                   <div key={key}>
@@ -188,7 +188,7 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
 
                           {entry.notes && (
                             <div className="mt-3 pt-3 border-t border-gray-200">
-                              <p className="text-sm font-medium text-gray-700">Notes:</p>
+                              <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Notes:</p>
                               <p className="text-sm text-gray-600 mt-1">{entry.notes}</p>
                             </div>
                           )}
@@ -214,8 +214,8 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
                   const currentStation = product.route.stations.find(s => s.id === product.currentStation);
                   return currentStation ? (
                     <div className="text-center space-y-3">
-                      <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto">
-                        <User className="w-8 h-8 text-blue-600" />
+                      <div className="w-16 h-16 bg-blue-100 dark:bg-blue-900/20 rounded-full flex items-center justify-center mx-auto">
+                        <User className="w-8 h-8 text-blue-600 dark:text-blue-400" />
                       </div>
                       <div>
                         <p className="font-medium text-lg">{currentStation.owner}</p>
@@ -240,7 +240,7 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">Route Description</p>
-                  <p className="text-sm text-gray-700">{product.route.description}</p>
+                  <p className="text-sm text-gray-700 dark:text-gray-300">{product.route.description}</p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">Total Stations</p>
@@ -257,10 +257,10 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
                 <button className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors">
                   Update Status
                 </button>
-                <button className="w-full bg-gray-100 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-200 transition-colors">
+                <button className="w-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 py-2 px-4 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
                   Edit Information
                 </button>
-                <button className="w-full bg-green-100 text-green-700 py-2 px-4 rounded-lg hover:bg-green-200 transition-colors">
+                <button className="w-full bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-300 py-2 px-4 rounded-lg hover:bg-green-200 dark:hover:bg-green-900/40 transition-colors">
                   Export Report
                 </button>
               </CardContent>

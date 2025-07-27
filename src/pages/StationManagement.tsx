@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Station, Field } from '@/types';
-import { Plus, Edit, Trash2, Settings, ArrowLeft, Clock, User } from 'lucide-react';
+import { Plus, Edit, Trash2, ArrowLeft, Clock, User } from 'lucide-react';
 import { StationForm } from '@/components/StationForm';
 
 interface StationManagementProps {
@@ -107,7 +107,7 @@ export function StationManagement({ onBack }: StationManagementProps) {
           </div>
           <button
             onClick={handleAddStation}
-            className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            className="inline-flex items-center px-4 py-2 bg-blue-600 dark:bg-blue-500 text-white rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors btn-touch focus-enhanced"
           >
             <Plus className="w-4 h-4 mr-2" />
             Add Station
@@ -123,13 +123,13 @@ export function StationManagement({ onBack }: StationManagementProps) {
                   <div className="flex space-x-1">
                     <button
                       onClick={() => handleEditStation(station)}
-                      className="p-1 text-gray-400 hover:text-blue-600 transition-colors"
+                      className="p-1 text-gray-400 dark:text-gray-500 hover:text-blue-600 dark:hover:text-blue-400 transition-colors btn-touch"
                     >
                       <Edit className="w-4 h-4" />
                     </button>
                     <button
                       onClick={() => handleDeleteStation(station.id)}
-                      className="p-1 text-gray-400 hover:text-red-600 transition-colors"
+                      className="p-1 text-gray-400 dark:text-gray-500 hover:text-red-600 dark:hover:text-red-400 transition-colors btn-touch"
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -138,8 +138,8 @@ export function StationManagement({ onBack }: StationManagementProps) {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                    <User className="w-4 h-4 text-blue-600" />
+                  <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/20 rounded-full flex items-center justify-center">
+                    <User className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                   </div>
                   <div>
                     <p className="text-sm text-gray-600 dark:text-gray-400">Owner</p>
@@ -148,8 +148,8 @@ export function StationManagement({ onBack }: StationManagementProps) {
                 </div>
 
                 <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                    <Clock className="w-4 h-4 text-green-600" />
+                  <div className="w-8 h-8 bg-green-100 dark:bg-green-900/20 rounded-full flex items-center justify-center">
+                    <Clock className="w-4 h-4 text-green-600 dark:text-green-400" />
                   </div>
                   <div>
                     <p className="text-sm text-gray-600 dark:text-gray-400">Estimated Duration</p>

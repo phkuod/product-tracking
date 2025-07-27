@@ -186,7 +186,7 @@ export function NotificationCenter() {
                   ))}
                   
                   {state.notifications.length > 5 && !showAll && (
-                    <div className="p-4 border-t border-gray-200">
+                    <div className="p-4 border-t border-gray-200 dark:border-gray-700">
                       <button
                         onClick={() => setShowAll(true)}
                         className="w-full text-sm text-blue-600 hover:text-blue-700 transition-colors"
@@ -197,7 +197,7 @@ export function NotificationCenter() {
                   )}
                   
                   {showAll && state.notifications.length > 5 && (
-                    <div className="p-4 border-t border-gray-200">
+                    <div className="p-4 border-t border-gray-200 dark:border-gray-700">
                       <button
                         onClick={() => setShowAll(false)}
                         className="w-full text-sm text-gray-600 hover:text-gray-700 transition-colors"

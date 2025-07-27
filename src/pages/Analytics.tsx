@@ -1,7 +1,5 @@
-import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { mockProducts } from '@/services/mockData';
-import { Product } from '@/types';
 import { BarChart3, TrendingUp, Clock, Users, AlertTriangle, CheckCircle } from 'lucide-react';
 
 interface AnalyticsProps {
@@ -102,7 +100,7 @@ export function Analytics({ onBack }: AnalyticsProps) {
                 <div>
                   <p className="text-sm text-gray-600 dark:text-gray-400">Total Products</p>
                   <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">{analytics.totalProducts}</p>
-                  <p className="text-sm text-green-600 mt-1">
+                  <p className="text-sm text-green-600 dark:text-green-400 mt-1">
                     {analytics.completedProducts} completed
                   </p>
                 </div>
@@ -119,7 +117,7 @@ export function Analytics({ onBack }: AnalyticsProps) {
                 <div>
                   <p className="text-sm text-gray-600 dark:text-gray-400">Average Progress</p>
                   <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">{analytics.averageProgress}%</p>
-                  <p className="text-sm text-blue-600 mt-1">
+                  <p className="text-sm text-blue-600 dark:text-blue-400 mt-1">
                     {analytics.inProgressProducts} in progress
                   </p>
                 </div>
@@ -150,7 +148,7 @@ export function Analytics({ onBack }: AnalyticsProps) {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-600 dark:text-gray-400">Overdue Items</p>
-                  <p className="text-3xl font-bold text-red-600">{analytics.overdueProducts}</p>
+                  <p className="text-3xl font-bold text-red-600 dark:text-red-400">{analytics.overdueProducts}</p>
                   <p className="text-sm text-gray-600 mt-1">
                     {Math.round((analytics.overdueProducts / analytics.totalProducts) * 100)}% of total
                   </p>
@@ -224,7 +222,7 @@ export function Analytics({ onBack }: AnalyticsProps) {
         </div>
 
         {/* Owner Performance */}
-        <Card className="rounded-2xl">
+        <Card className="card-enhanced rounded-2xl animate-scale-in">
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
               <CheckCircle className="w-5 h-5" />
@@ -248,8 +246,8 @@ export function Analytics({ onBack }: AnalyticsProps) {
                     <tr key={owner.owner} className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50">
                       <td className="py-3 px-4 font-medium text-gray-900 dark:text-gray-100">{owner.owner}</td>
                       <td className="py-3 px-4 text-gray-900 dark:text-gray-100">{owner.total}</td>
-                      <td className="py-3 px-4 text-green-600">{owner.completed}</td>
-                      <td className="py-3 px-4 text-red-600">{owner.overdue}</td>
+                      <td className="py-3 px-4 text-green-600 dark:text-green-400">{owner.completed}</td>
+                      <td className="py-3 px-4 text-red-600 dark:text-red-400">{owner.overdue}</td>
                       <td className="py-3 px-4">
                         <div className="flex items-center space-x-2">
                           <div className="w-16 bg-gray-200 dark:bg-gray-700 rounded-full h-2">

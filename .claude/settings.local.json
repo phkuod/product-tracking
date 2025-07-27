@@ -21,7 +21,9 @@
       "Bash(git add:*)",
       "Bash(git commit:*)",
       "Bash(git push:*)",
-      "Bash(gh pr create:*)"
+      "Bash(gh pr create:*)",
+      "Bash(start http://localhost:5177)",
+      "Bash(cmd /c start http://localhost:5177)"
     ],
     "deny": []
   }

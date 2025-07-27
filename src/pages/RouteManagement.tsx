@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Route, Station } from '@/types';
@@ -191,7 +191,7 @@ export function RouteManagement({ onBack }: RouteManagementProps) {
           </div>
           <button
             onClick={handleAddRoute}
-            className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            className="inline-flex items-center px-4 py-2 bg-blue-600 dark:bg-blue-500 text-white rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors btn-touch focus-enhanced"
           >
             <Plus className="w-4 h-4 mr-2" />
             Create Route
@@ -205,18 +205,18 @@ export function RouteManagement({ onBack }: RouteManagementProps) {
                 <div className="flex items-center justify-between">
                   <div>
                     <CardTitle className="text-xl">{route.name}</CardTitle>
-                    <p className="text-sm text-gray-600 mt-1">{route.description}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{route.description}</p>
                   </div>
                   <div className="flex space-x-1">
                     <button
                       onClick={() => handleEditRoute(route)}
-                      className="p-2 text-gray-400 hover:text-blue-600 transition-colors"
+                      className="p-2 text-gray-400 dark:text-gray-500 hover:text-blue-600 dark:hover:text-blue-400 transition-colors btn-touch"
                     >
                       <Edit className="w-4 h-4" />
                     </button>
                     <button
                       onClick={() => handleDeleteRoute(route.id)}
-                      className="p-2 text-gray-400 hover:text-red-600 transition-colors"
+                      className="p-2 text-gray-400 dark:text-gray-500 hover:text-red-600 dark:hover:text-red-400 transition-colors btn-touch"
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -226,22 +226,22 @@ export function RouteManagement({ onBack }: RouteManagementProps) {
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-3 gap-4">
                   <div className="text-center">
-                    <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                      <Settings className="w-4 h-4 text-blue-600" />
+                    <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/20 rounded-full flex items-center justify-center mx-auto mb-2">
+                      <Settings className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                     </div>
                     <p className="text-lg font-bold text-gray-900 dark:text-gray-100">{route.stations.length}</p>
                     <p className="text-xs text-gray-600 dark:text-gray-400">Stations</p>
                   </div>
                   <div className="text-center">
-                    <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                      <Clock className="w-4 h-4 text-green-600" />
+                    <div className="w-8 h-8 bg-green-100 dark:bg-green-900/20 rounded-full flex items-center justify-center mx-auto mb-2">
+                      <Clock className="w-4 h-4 text-green-600 dark:text-green-400" />
                     </div>
                     <p className="text-lg font-bold text-gray-900 dark:text-gray-100">{getTotalDuration(route.stations)}</p>
                     <p className="text-xs text-gray-600 dark:text-gray-400">Minutes</p>
                   </div>
                   <div className="text-center">
-                    <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                      <Users className="w-4 h-4 text-purple-600" />
+                    <div className="w-8 h-8 bg-purple-100 dark:bg-purple-900/20 rounded-full flex items-center justify-center mx-auto mb-2">
+                      <Users className="w-4 h-4 text-purple-600 dark:text-purple-400" />
                     </div>
                     <p className="text-lg font-bold text-gray-900 dark:text-gray-100">{getUniqueOwners(route.stations)}</p>
                     <p className="text-xs text-gray-600 dark:text-gray-400">Owners</p>
