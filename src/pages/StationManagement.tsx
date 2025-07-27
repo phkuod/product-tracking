@@ -102,7 +102,7 @@ export function StationManagement({ onBack }: StationManagementProps) {
             </button>
             <div>
               <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Station Management</h1>
-              <p className="text-gray-600 mt-1">Define and manage manufacturing stations</p>
+              <p className="text-gray-600 dark:text-gray-400 mt-1">Define and manage manufacturing stations</p>
             </div>
           </div>
           <button
@@ -116,7 +116,7 @@ export function StationManagement({ onBack }: StationManagementProps) {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {stations.map(station => (
-            <Card key={station.id} className="rounded-2xl hover:shadow-lg transition-shadow">
+            <Card key={station.id} className="card-enhanced rounded-2xl hover:shadow-lg transition-shadow animate-scale-in">
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
                   <CardTitle className="text-lg">{station.name}</CardTitle>
@@ -142,7 +142,7 @@ export function StationManagement({ onBack }: StationManagementProps) {
                     <User className="w-4 h-4 text-blue-600" />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">Owner</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Owner</p>
                     <p className="font-medium">{station.owner}</p>
                   </div>
                 </div>
@@ -152,7 +152,7 @@ export function StationManagement({ onBack }: StationManagementProps) {
                     <Clock className="w-4 h-4 text-green-600" />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">Estimated Duration</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Estimated Duration</p>
                     <p className="font-medium">{station.estimatedDuration} minutes</p>
                   </div>
                 </div>
@@ -168,8 +168,8 @@ export function StationManagement({ onBack }: StationManagementProps) {
                   <p className="text-sm text-gray-600 mb-2">Fields ({station.fields.length})</p>
                   <div className="space-y-2">
                     {station.fields.slice(0, 3).map(field => (
-                      <div key={field.id} className="flex items-center justify-between text-xs bg-gray-50 p-2 rounded">
-                        <span className="font-medium">{field.name}</span>
+                      <div key={field.id} className="flex items-center justify-between text-xs bg-gray-50 dark:bg-gray-800/50 p-2 rounded">
+                        <span className="font-medium text-gray-900 dark:text-gray-100">{field.name}</span>
                         <div className="flex space-x-1">
                           <Badge variant="outline" className="text-xs">
                             {getFieldTypeLabel(field.type)}
@@ -183,7 +183,7 @@ export function StationManagement({ onBack }: StationManagementProps) {
                       </div>
                     ))}
                     {station.fields.length > 3 && (
-                      <p className="text-xs text-gray-500 text-center">
+                      <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
                         +{station.fields.length - 3} more fields
                       </p>
                     )}
@@ -193,14 +193,14 @@ export function StationManagement({ onBack }: StationManagementProps) {
             </Card>
           ))}
 
-          <Card className="rounded-2xl border-2 border-dashed border-gray-300 bg-gray-50 hover:border-blue-400 hover:bg-blue-50 transition-colors cursor-pointer" onClick={handleAddStation}>
+          <Card className="rounded-2xl border-2 border-dashed border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800/50 hover:border-blue-400 dark:hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors cursor-pointer" onClick={handleAddStation}>
             <CardContent className="flex flex-col items-center justify-center h-64 space-y-4">
-              <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">
-                <Plus className="w-6 h-6 text-gray-400" />
+              <div className="w-12 h-12 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center">
+                <Plus className="w-6 h-6 text-gray-400 dark:text-gray-500" />
               </div>
               <div className="text-center">
-                <p className="font-medium text-gray-600">Add New Station</p>
-                <p className="text-sm text-gray-500">Define a new manufacturing station</p>
+                <p className="font-medium text-gray-600 dark:text-gray-300">Add New Station</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">Define a new manufacturing station</p>
               </div>
             </CardContent>
           </Card>

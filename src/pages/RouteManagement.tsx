@@ -186,7 +186,7 @@ export function RouteManagement({ onBack }: RouteManagementProps) {
             </button>
             <div>
               <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Route Management</h1>
-              <p className="text-gray-600 mt-1">Design and manage manufacturing routes</p>
+              <p className="text-gray-600 dark:text-gray-400 mt-1">Design and manage manufacturing routes</p>
             </div>
           </div>
           <button
@@ -200,7 +200,7 @@ export function RouteManagement({ onBack }: RouteManagementProps) {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {routes.map(route => (
-            <Card key={route.id} className="rounded-2xl hover:shadow-lg transition-shadow">
+            <Card key={route.id} className="card-enhanced rounded-2xl hover:shadow-lg transition-shadow animate-scale-in">
               <CardHeader className="pb-4">
                 <div className="flex items-center justify-between">
                   <div>
@@ -230,39 +230,39 @@ export function RouteManagement({ onBack }: RouteManagementProps) {
                       <Settings className="w-4 h-4 text-blue-600" />
                     </div>
                     <p className="text-lg font-bold text-gray-900 dark:text-gray-100">{route.stations.length}</p>
-                    <p className="text-xs text-gray-600">Stations</p>
+                    <p className="text-xs text-gray-600 dark:text-gray-400">Stations</p>
                   </div>
                   <div className="text-center">
                     <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-2">
                       <Clock className="w-4 h-4 text-green-600" />
                     </div>
                     <p className="text-lg font-bold text-gray-900 dark:text-gray-100">{getTotalDuration(route.stations)}</p>
-                    <p className="text-xs text-gray-600">Minutes</p>
+                    <p className="text-xs text-gray-600 dark:text-gray-400">Minutes</p>
                   </div>
                   <div className="text-center">
                     <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-2">
                       <Users className="w-4 h-4 text-purple-600" />
                     </div>
                     <p className="text-lg font-bold text-gray-900 dark:text-gray-100">{getUniqueOwners(route.stations)}</p>
-                    <p className="text-xs text-gray-600">Owners</p>
+                    <p className="text-xs text-gray-600 dark:text-gray-400">Owners</p>
                   </div>
                 </div>
 
                 <div>
-                  <p className="text-sm font-medium text-gray-700 mb-3">Station Flow</p>
+                  <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Station Flow</p>
                   <div className="space-y-2">
                     {route.stations.map((station, index) => (
                       <div key={station.id} className="flex items-center space-x-3">
-                        <div className="flex-shrink-0 w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center text-xs font-medium text-blue-700">
+                        <div className="flex-shrink-0 w-6 h-6 bg-blue-100 dark:bg-blue-900/20 rounded-full flex items-center justify-center text-xs font-medium text-blue-700 dark:text-blue-400">
                           {index + 1}
                         </div>
-                        <div className="flex-1 flex items-center justify-between py-2 px-3 bg-gray-50 rounded-lg">
+                        <div className="flex-1 flex items-center justify-between py-2 px-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
                           <div>
-                            <p className="font-medium text-sm">{station.name}</p>
-                            <p className="text-xs text-gray-600">{station.owner}</p>
+                            <p className="font-medium text-sm text-gray-900 dark:text-gray-100">{station.name}</p>
+                            <p className="text-xs text-gray-600 dark:text-gray-400">{station.owner}</p>
                           </div>
                           <div className="text-right">
-                            <p className="text-sm font-medium">{station.estimatedDuration}min</p>
+                            <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{station.estimatedDuration}min</p>
                             <Badge variant="outline" className="text-xs">
                               {station.fields.length} fields
                             </Badge>
@@ -280,16 +280,16 @@ export function RouteManagement({ onBack }: RouteManagementProps) {
           ))}
 
           <Card 
-            className="rounded-2xl border-2 border-dashed border-gray-300 bg-gray-50 hover:border-blue-400 hover:bg-blue-50 transition-colors cursor-pointer" 
+            className="rounded-2xl border-2 border-dashed border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800/50 hover:border-blue-400 dark:hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors cursor-pointer" 
             onClick={handleAddRoute}
           >
             <CardContent className="flex flex-col items-center justify-center h-80 space-y-4">
-              <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">
-                <Plus className="w-6 h-6 text-gray-400" />
+              <div className="w-12 h-12 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center">
+                <Plus className="w-6 h-6 text-gray-400 dark:text-gray-500" />
               </div>
               <div className="text-center">
-                <p className="font-medium text-gray-600">Create New Route</p>
-                <p className="text-sm text-gray-500">Design a custom manufacturing flow</p>
+                <p className="font-medium text-gray-600 dark:text-gray-300">Create New Route</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">Design a custom manufacturing flow</p>
               </div>
             </CardContent>
           </Card>
