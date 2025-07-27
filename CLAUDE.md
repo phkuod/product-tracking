@@ -155,10 +155,15 @@ gh pr create --title "Feature: Description" --body "Enhancement details" --base 
 # Install dependencies
 npm install
 
+# Stop any running development server (if needed)
+# Use Ctrl+C in the terminal running the server, or:
+# taskkill /f /im node.exe (kills all Node processes - use with caution)
+
 # Start development server
 npm run dev
 
 # Open browser (in new terminal/command prompt)
+# Note: Port may vary (5173, 5174, 5175, etc.) if default port is in use
 start http://localhost:5173
 
 # Build for production
@@ -168,12 +173,30 @@ npm run build
 npm run preview
 ```
 
+### Development Server Management
+```cmd
+# Start development server
+npm run dev
+
+# Stop development server
+# Method 1: Press Ctrl+C in the terminal where server is running
+# Method 2: Close the terminal window
+# Method 3: Kill all Node processes (use carefully)
+taskkill /f /im node.exe
+
+# Check if port is in use
+netstat -ano | findstr :5173
+
+# Kill specific process by PID (if needed)
+taskkill /f /PID <process_id>
+```
+
 ### Available Scripts (Windows)
-- `npm run dev`: Start development server with hot reload
+- `npm run dev`: Start development server with hot reload (auto-detects available port)
 - `npm run build`: Create production build
 - `npm run lint`: Run ESLint for code quality
 - `npm run preview`: Preview production build locally
-- `start http://localhost:5173`: Open application in default browser
+- `start http://localhost:5173`: Open application in default browser (adjust port as needed)
 
 ## File Structure
 ```
