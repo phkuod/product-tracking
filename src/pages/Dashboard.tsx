@@ -1,5 +1,6 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef, useCallback } from 'react';
 import { ProductCard } from '@/components/ProductCard';
+import { VirtualizedGrid } from '@/components/VirtualizedGrid';
 import { Product } from '@/types';
 import { Search, Plus, BarChart3, Settings, ArrowRight, Menu, X, Grid, List } from 'lucide-react';
 import { AddProductForm } from '@/components/AddProductForm';
@@ -7,6 +8,8 @@ import { AdvancedFilters, FilterOptions } from '@/components/AdvancedFilters';
 import { BulkOperations } from '@/components/BulkOperations';
 import { useAppContext } from '@/contexts/AppContext';
 import { useErrorHandler } from '@/hooks/useErrorHandler';
+import { useKeyboardShortcuts, createCommonShortcuts } from '@/hooks/useKeyboardShortcuts';
+import { KeyboardShortcutsHelp } from '@/components/KeyboardShortcutsHelp';
 
 interface DashboardProps {
   onProductClick: (product: Product) => void;
@@ -23,6 +26,8 @@ export function Dashboard({ onProductClick, onAnalyticsClick, onStationsClick, o
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [showKeyboardHelp, setShowKeyboardHelp] = useState(false);
+  const searchInputRef = useRef<HTMLInputElement>(null);
   const [filters, setFilters] = useState<FilterOptions>({
     status: 'all',
     progress: { min: 0, max: 100 },
@@ -30,6 +35,32 @@ export function Dashboard({ onProductClick, onAnalyticsClick, onStationsClick, o
     owner: '',
     route: '',
     station: ''
+  });
+
+  // Keyboard shortcuts configuration
+  const shortcuts = createCommonShortcuts({
+    onNewProduct: () => setShowAddForm(true),
+    onSearch: () => searchInputRef.current?.focus(),
+    onEscape: () => {
+      if (showAddForm) {
+        setShowAddForm(false);
+      } else if (showMobileMenu) {
+        setShowMobileMenu(false);
+      } else if (selectedProducts.length > 0) {
+        setSelectedProducts([]);
+      } else if (showKeyboardHelp) {
+        setShowKeyboardHelp(false);
+      } else if (searchTerm) {
+        setSearchTerm('');
+        searchInputRef.current?.blur();
+      }
+    },
+    onHelp: () => setShowKeyboardHelp(true),
+  });
+
+  useKeyboardShortcuts({ 
+    shortcuts, 
+    enabled: !showAddForm && !showKeyboardHelp 
   });
 
   const filteredProducts = useMemo(() => {
@@ -74,18 +105,20 @@ export function Dashboard({ onProductClick, onAnalyticsClick, onStationsClick, o
     });
   }, [state.products, searchTerm, filters]);
 
-  const stats = {
+  // Memoize expensive stats calculations
+  const stats = useMemo(() => ({
     total: state.products.length,
     normal: state.products.filter(p => p.status === 'normal').length,
     overdue: state.products.filter(p => p.status === 'overdue').length,
     inProgress: state.products.filter(p => p.progress < 100).length
-  };
+  }), [state.products]);
 
-  const handleProductClick = (product: Product) => {
+  // Optimize callback functions with useCallback
+  const handleProductClick = useCallback((product: Product) => {
     onProductClick(product);
-  };
+  }, [onProductClick]);
 
-  const resetFilters = () => {
+  const resetFilters = useCallback(() => {
     setFilters({
       status: 'all',
       progress: { min: 0, max: 100 },
@@ -95,12 +128,37 @@ export function Dashboard({ onProductClick, onAnalyticsClick, onStationsClick, o
       station: ''
     });
     setSearchTerm('');
-  };
+  }, []);
 
-  const handleBulkUpdate = () => {
+  const handleBulkUpdate = useCallback(() => {
     // Refresh data after bulk operations
     setSelectedProducts([]);
-  };
+  }, []);
+
+  const handleAddProduct = useCallback((productData: any) => {
+    try {
+      addProduct(productData);
+      setShowAddForm(false);
+    } catch (error) {
+      handleError(error as Error);
+    }
+  }, [addProduct, handleError]);
+
+  const toggleProductSelection = useCallback((productId: string) => {
+    setSelectedProducts(prev => 
+      prev.includes(productId)
+        ? prev.filter(id => id !== productId)
+        : [...prev, productId]
+    );
+  }, []);
+
+  const handleSelectAll = useCallback(() => {
+    setSelectedProducts(prev => 
+      prev.length === filteredProducts.length 
+        ? [] 
+        : filteredProducts.map(p => p.id)
+    );
+  }, [filteredProducts]);
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 theme-transition">
@@ -273,8 +331,9 @@ export function Dashboard({ onProductClick, onAnalyticsClick, onStationsClick, o
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 w-4 h-4" />
               <input
+                ref={searchInputRef}
                 type="text"
-                placeholder="Search product name or model..."
+                placeholder="Search product name or model... (Press / to focus)"
                 className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg focus-enhanced theme-transition"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -339,49 +398,58 @@ export function Dashboard({ onProductClick, onAnalyticsClick, onStationsClick, o
             )}
           </div>
 
-          <div className={
-            viewMode === 'grid' 
-              ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6"
-              : "space-y-3"
-          }>
-            {filteredProducts.map(product => (
-              <div key={product.id} className="relative">
-                <div 
-                  className={`absolute ${viewMode === 'grid' ? 'top-2 left-2' : 'top-1 left-1'} z-10 ${
-                    selectedProducts.includes(product.id) ? 'opacity-100' : 'opacity-0 hover:opacity-100'
-                  } transition-opacity`}
-                >
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      if (selectedProducts.includes(product.id)) {
-                        setSelectedProducts(prev => prev.filter(id => id !== product.id));
-                      } else {
-                        setSelectedProducts(prev => [...prev, product.id]);
-                      }
-                    }}
-                    className={`w-6 h-6 rounded border-2 flex items-center justify-center transition-colors btn-touch ${
-                      selectedProducts.includes(product.id)
-                        ? 'bg-blue-600 dark:bg-blue-500 border-blue-600 dark:border-blue-500 text-white'
-                        : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 hover:border-blue-400 dark:hover:border-blue-500'
-                    }`}
+          {/* Use VirtualizedGrid for large datasets, regular grid for smaller ones */}
+          {filteredProducts.length > 50 ? (
+            <VirtualizedGrid
+              products={filteredProducts}
+              onProductClick={handleProductClick}
+              viewMode={viewMode}
+              selectedProducts={selectedProducts}
+              onProductSelect={toggleProductSelection}
+              itemHeight={viewMode === 'list' ? 120 : 400}
+              itemWidth={viewMode === 'list' ? 800 : 350}
+            />
+          ) : (
+            <div className={
+              viewMode === 'grid' 
+                ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6"
+                : "space-y-3"
+            }>
+              {filteredProducts.map(product => (
+                <div key={product.id} className="relative">
+                  <div 
+                    className={`absolute ${viewMode === 'grid' ? 'top-2 left-2' : 'top-1 left-1'} z-10 ${
+                      selectedProducts.includes(product.id) ? 'opacity-100' : 'opacity-0 hover:opacity-100'
+                    } transition-opacity`}
                   >
-                    {selectedProducts.includes(product.id) && (
-                      <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                    )}
-                  </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleProductSelection(product.id);
+                      }}
+                      className={`w-6 h-6 rounded border-2 flex items-center justify-center transition-colors btn-touch ${
+                        selectedProducts.includes(product.id)
+                          ? 'bg-blue-600 dark:bg-blue-500 border-blue-600 dark:border-blue-500 text-white'
+                          : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 hover:border-blue-400 dark:hover:border-blue-500'
+                      }`}
+                    >
+                      {selectedProducts.includes(product.id) && (
+                        <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                      )}
+                    </button>
+                  </div>
+                  <ProductCard
+                    product={product}
+                    onClick={() => handleProductClick(product)}
+                    viewMode={viewMode === 'list' ? 'compact' : 'card'}
+                    showQuickActions={viewMode === 'grid'}
+                  />
                 </div>
-                <ProductCard
-                  product={product}
-                  onClick={() => handleProductClick(product)}
-                  viewMode={viewMode === 'list' ? 'compact' : 'card'}
-                  showQuickActions={viewMode === 'grid'}
-                />
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
 
           {filteredProducts.length === 0 && (
             <div className="text-center py-12 animate-fade-in">
@@ -420,6 +488,13 @@ export function Dashboard({ onProductClick, onAnalyticsClick, onStationsClick, o
             onCancel={() => setShowAddForm(false)}
           />
         )}
+
+        {/* Keyboard Shortcuts Help */}
+        <KeyboardShortcutsHelp
+          shortcuts={shortcuts}
+          isOpen={showKeyboardHelp}
+          onClose={() => setShowKeyboardHelp(false)}
+        />
       </div>
       </div>
     </div>
