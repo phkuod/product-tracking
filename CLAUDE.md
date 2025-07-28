@@ -151,30 +151,145 @@ StationHistoryEntry: {
 - Node.js (v16 or higher)
 - npm or yarn
 
-## Git Workflow (Windows)
+## Git Workflow (Best Practices)
 
-**Current Branch**: `dev` (development branch)
-**Main Branch**: `master` (for pull requests)
+**Main Branch**: `master` (production-ready code)
+**Development Branch**: `dev` (integration branch)
+**Feature Branches**: `feature/description` or `fix/description`
 
-### After Any Enhancement
-1. **Commit Changes**: Create descriptive commit messages
-2. **Push to Dev**: Push changes to remote dev branch
-3. **Create PR**: Create pull request from dev to master
+### Branch Strategy
+- `master`: Production-ready code, protected branch
+- `dev`: Integration branch for testing features together
+- `feature/*`: New features (e.g., `feature/user-auth`, `feature/dark-mode`)
+- `fix/*`: Bug fixes (e.g., `fix/login-error`, `fix/ui-alignment`)
+- `hotfix/*`: Critical production fixes
+- `chore/*`: Maintenance tasks (e.g., `chore/update-deps`)
 
-### Commands
+### Conventional Commits
+All commits must follow [Conventional Commits](https://www.conventionalcommits.org/) format:
+```
+<type>[optional scope]: <description>
+
+[optional body]
+
+[optional footer(s)]
+```
+
+**Types:**
+- `feat`: New feature
+- `fix`: Bug fix
+- `docs`: Documentation changes
+- `style`: Code style changes (formatting, etc.)
+- `refactor`: Code refactoring
+- `test`: Adding or updating tests
+- `chore`: Maintenance tasks
+- `perf`: Performance improvements
+- `ci`: CI/CD changes
+- `build`: Build system changes
+- `revert`: Revert previous commit
+
+### Feature Development Workflow
 ```cmd
-# Check current status
-git status
+# 1. Start from latest dev branch
+git checkout dev
+git pull origin dev
 
-# Add and commit changes
+# 2. Create feature branch
+git checkout -b feature/your-feature-name
+
+# 3. Make changes and commit (follows conventional commits)
 git add .
-git commit -m "feat: descriptive commit message"
+git commit -m "feat: add user authentication system"
 
-# Push to remote dev branch
-git push origin dev
+# 4. Push feature branch
+git push origin feature/your-feature-name
 
-# Create pull request (using GitHub CLI)
-gh pr create --title "Feature: Description" --body "Enhancement details" --base master --head dev
+# 5. Create pull request to dev branch
+gh pr create --title "feat: Add user authentication system" --base dev --head feature/your-feature-name
+
+# 6. After review and merge, delete feature branch
+git branch -d feature/your-feature-name
+git push origin --delete feature/your-feature-name
+```
+
+### Release Workflow
+```cmd
+# 1. Create release PR from dev to master
+gh pr create --title "Release: v1.2.0" --base master --head dev
+
+# 2. After review and merge, tag the release
+git checkout master
+git pull origin master
+git tag -a v1.2.0 -m "Release version 1.2.0"
+git push origin v1.2.0
+```
+
+### Hotfix Workflow
+```cmd
+# 1. Create hotfix branch from master
+git checkout master
+git pull origin master
+git checkout -b hotfix/critical-bug-fix
+
+# 2. Make fix and commit
+git add .
+git commit -m "fix: resolve critical security vulnerability"
+
+# 3. Create PR to master
+gh pr create --title "hotfix: Critical security fix" --base master --head hotfix/critical-bug-fix
+
+# 4. Also merge back to dev
+gh pr create --title "hotfix: Merge critical fix to dev" --base dev --head hotfix/critical-bug-fix
+```
+
+### Git Hooks Setup
+This project includes Git hooks for code quality:
+
+```cmd
+# Install Git hooks (run once after cloning)
+git config core.hooksPath .githooks
+
+# Make hooks executable (Linux/Mac)
+chmod +x .githooks/*
+
+# Windows: hooks are automatically executable
+```
+
+**Available Hooks:**
+- `commit-msg`: Validates commit message format (Conventional Commits)
+- `pre-commit`: Runs linting and basic security checks
+
+### Branch Protection Rules
+Configure these settings in GitHub repository settings:
+
+**Master Branch Protection:**
+- ✅ Require pull request reviews before merging
+- ✅ Require status checks to pass before merging
+- ✅ Require conversation resolution before merging
+- ✅ Require linear history
+- ✅ Include administrators
+
+**Dev Branch Protection:**
+- ✅ Require pull request reviews (1 reviewer minimum)
+- ✅ Require status checks to pass before merging
+- ✅ Allow force pushes for maintainers
+
+### Quick Commands Reference
+```cmd
+# Setup new feature
+git checkout dev && git pull origin dev && git checkout -b feature/my-feature
+
+# Commit with validation
+git add . && git commit -m "feat: add new feature"
+
+# Create PR
+gh pr create --title "feat: Add new feature" --base dev
+
+# Clean up after merge
+git checkout dev && git pull origin dev && git branch -d feature/my-feature
+
+# Emergency hotfix
+git checkout master && git pull origin master && git checkout -b hotfix/urgent-fix
 ```
 
 ### Quick Start (Windows)
