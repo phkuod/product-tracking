@@ -3,6 +3,7 @@ import { Badge } from '@/components/ui/badge';
 import { RouteProgress } from '@/components/RouteProgress';
 import { Product, StationHistoryEntry } from '@/types';
 import { formatDate, getStatusColor, getStatusLabel } from '@/lib/utils';
+import { useBreadcrumb } from '@/components/Breadcrumbs';
 import { ArrowLeft, Clock, User, Package, CheckCircle, AlertCircle, PlayCircle } from 'lucide-react';
 
 interface ProductDetailProps {
@@ -11,6 +12,18 @@ interface ProductDetailProps {
 }
 
 export function ProductDetail({ product, onBack }: ProductDetailProps) {
+  // Set breadcrumbs for this page
+  useBreadcrumb([
+    {
+      label: 'Products',
+      onClick: onBack
+    },
+    {
+      label: product.name,
+      icon: <Package className="w-4 h-4" />,
+      current: true
+    }
+  ]);
   const getStatusIcon = (status: StationHistoryEntry['status']) => {
     switch (status) {
       case 'completed':
@@ -91,7 +104,7 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">Manufacturing Route</p>
-                  <p className="font-medium">{product.route.name}</p>
+                  <p className="font-medium">{product.route?.name ?? 'No route assigned'}</p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">Overall Progress</p>
@@ -113,11 +126,17 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
                 <CardTitle>Manufacturing Process Progress</CardTitle>
               </CardHeader>
               <CardContent>
-                <RouteProgress 
-                  stations={product.route.stations}
-                  currentStationId={product.currentStation}
-                  className="justify-center"
-                />
+                {product.route?.stations ? (
+                  <RouteProgress 
+                    stations={product.route.stations}
+                    currentStationId={product.currentStation}
+                    className="justify-center"
+                  />
+                ) : (
+                  <div className="text-center py-8">
+                    <p className="text-gray-500">No route stations available</p>
+                  </div>
+                )}
               </CardContent>
             </Card>
 
@@ -130,9 +149,9 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {product.stationHistory.map((entry, index) => (
+                  {product.stationHistory?.length > 0 ? product.stationHistory.map((entry, index) => (
                     <div key={entry.id} className="relative">
-                      {index < product.stationHistory.length - 1 && (
+                      {index < (product.stationHistory?.length ?? 0) - 1 && (
                         <div className="absolute left-6 top-12 bottom-0 w-px bg-gray-200 dark:bg-gray-700"></div>
                       )}
                       
@@ -195,7 +214,12 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
                         </div>
                       </div>
                     </div>
-                  ))}
+                  )) : (
+                    <div className="text-center py-8">
+                      <Clock className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+                      <p className="text-gray-500">No station history available</p>
+                    </div>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -211,7 +235,7 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
               </CardHeader>
               <CardContent>
                 {(() => {
-                  const currentStation = product.route.stations.find(s => s.id === product.currentStation);
+                  const currentStation = product.route?.stations?.find(s => s.id === product.currentStation);
                   return currentStation ? (
                     <div className="text-center space-y-3">
                       <div className="w-16 h-16 bg-blue-100 dark:bg-blue-900/20 rounded-full flex items-center justify-center mx-auto">
@@ -236,15 +260,15 @@ export function ProductDetail({ product, onBack }: ProductDetailProps) {
               <CardContent className="space-y-3">
                 <div>
                   <p className="text-sm text-gray-600">Route Name</p>
-                  <p className="font-medium">{product.route.name}</p>
+                  <p className="font-medium">{product.route?.name ?? 'No route assigned'}</p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">Route Description</p>
-                  <p className="text-sm text-gray-700 dark:text-gray-300">{product.route.description}</p>
+                  <p className="text-sm text-gray-700 dark:text-gray-300">{product.route?.description ?? 'No description available'}</p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">Total Stations</p>
-                  <p className="font-medium">{product.route.stations.length} stations</p>
+                  <p className="font-medium">{product.route?.stations?.length ?? 0} stations</p>
                 </div>
               </CardContent>
             </Card>
