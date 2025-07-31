@@ -1,7 +1,7 @@
-import React, { createContext, useContext, useReducer, ReactNode, useEffect } from 'react';
+import React, { createContext, useContext, useReducer, ReactNode, useEffect, useCallback } from 'react';
 import { Product, Route, Station } from '@/types';
-import { mockProducts, mockRoutes, mockStations } from '@/services/mockData';
-import { useLocalStorage } from '@/hooks/useLocalStorage';
+import { apiService, ApiError, ProductFilters, CreateProductRequest, UpdateProductRequest, BulkUpdateRequest } from '@/services/api';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface AppState {
   products: Product[];
@@ -10,6 +10,14 @@ interface AppState {
   notifications: Notification[];
   currentView: 'dashboard' | 'detail' | 'analytics' | 'stations' | 'routes';
   selectedProduct: Product | null;
+  isLoading: boolean;
+  error: string | null;
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
 }
 
 interface Notification {
@@ -22,7 +30,7 @@ interface Notification {
 }
 
 type AppAction =
-  | { type: 'SET_PRODUCTS'; payload: Product[] }
+  | { type: 'SET_PRODUCTS'; payload: { products: Product[]; pagination: AppState['pagination'] } }
   | { type: 'ADD_PRODUCT'; payload: Product }
   | { type: 'UPDATE_PRODUCT'; payload: Product }
   | { type: 'DELETE_PRODUCT'; payload: string }
@@ -38,21 +46,35 @@ type AppAction =
   | { type: 'MARK_NOTIFICATION_READ'; payload: string }
   | { type: 'CLEAR_NOTIFICATIONS' }
   | { type: 'SET_CURRENT_VIEW'; payload: AppState['currentView'] }
-  | { type: 'SET_SELECTED_PRODUCT'; payload: Product | null };
+  | { type: 'SET_SELECTED_PRODUCT'; payload: Product | null }
+  | { type: 'SET_LOADING'; payload: boolean }
+  | { type: 'SET_ERROR'; payload: string | null };
 
 const initialState: AppState = {
-  products: mockProducts,
-  routes: mockRoutes,
-  stations: mockStations,
+  products: [],
+  routes: [],
+  stations: [],
   notifications: [],
   currentView: 'dashboard',
   selectedProduct: null,
+  isLoading: false,
+  error: null,
+  pagination: {
+    page: 1,
+    limit: 20,
+    total: 0,
+    totalPages: 0,
+  },
 };
 
 function appReducer(state: AppState, action: AppAction): AppState {
   switch (action.type) {
     case 'SET_PRODUCTS':
-      return { ...state, products: action.payload };
+      return { 
+        ...state, 
+        products: action.payload.products, 
+        pagination: action.payload.pagination 
+      };
     
     case 'ADD_PRODUCT':
       return { 
@@ -145,6 +167,12 @@ function appReducer(state: AppState, action: AppAction): AppState {
     case 'SET_SELECTED_PRODUCT':
       return { ...state, selectedProduct: action.payload };
     
+    case 'SET_LOADING':
+      return { ...state, isLoading: action.payload };
+    
+    case 'SET_ERROR':
+      return { ...state, error: action.payload };
+    
     default:
       return state;
   }
@@ -153,9 +181,13 @@ function appReducer(state: AppState, action: AppAction): AppState {
 interface AppContextType {
   state: AppState;
   dispatch: React.Dispatch<AppAction>;
-  addProduct: (product: Omit<Product, 'id' | 'createdAt' | 'updatedAt'>) => void;
-  updateProduct: (product: Product) => void;
-  deleteProduct: (productId: string) => void;
+  loadProducts: (filters?: ProductFilters) => Promise<void>;
+  loadRoutes: () => Promise<void>;
+  loadStations: () => Promise<void>;
+  addProduct: (product: CreateProductRequest) => Promise<void>;
+  updateProduct: (id: string, updates: UpdateProductRequest) => Promise<void>;
+  deleteProduct: (productId: string) => Promise<void>;
+  bulkUpdateProducts: (bulkUpdate: BulkUpdateRequest) => Promise<void>;
   addNotification: (notification: Omit<Notification, 'id' | 'timestamp' | 'read'>) => void;
   markNotificationRead: (notificationId: string) => void;
   clearNotifications: () => void;
@@ -166,133 +198,11 @@ interface AppContextType {
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export function AppProvider({ children }: { children: ReactNode }) {
-  const [persistedProducts, setPersistedProducts] = useLocalStorage<Product[]>('products', mockProducts);
-  const [persistedRoutes, setPersistedRoutes] = useLocalStorage<Route[]>('routes', mockRoutes);
-  const [persistedStations, setPersistedStations] = useLocalStorage<Station[]>('stations', mockStations);
-  
-  const [state, dispatch] = useReducer(appReducer, {
-    ...initialState,
-    products: persistedProducts,
-    routes: persistedRoutes,
-    stations: persistedStations,
-  });
+  const { isAuthenticated } = useAuth();
+  const [state, dispatch] = useReducer(appReducer, initialState);
 
-  // Sync state changes to localStorage
-  useEffect(() => {
-    setPersistedProducts(state.products);
-  }, [state.products, setPersistedProducts]);
-
-  useEffect(() => {
-    setPersistedRoutes(state.routes);
-  }, [state.routes, setPersistedRoutes]);
-
-  useEffect(() => {
-    setPersistedStations(state.stations);
-  }, [state.stations, setPersistedStations]);
-
-  const addProduct = (productData: Omit<Product, 'id' | 'createdAt' | 'updatedAt'>) => {
-    try {
-      // Validate required fields
-      if (!productData.name?.trim()) {
-        throw new Error('Product name is required');
-      }
-      if (!productData.model?.trim()) {
-        throw new Error('Product model is required');
-      }
-      if (!productData.route) {
-        throw new Error('Product route is required');
-      }
-
-      const newProduct: Product = {
-        ...productData,
-        id: `product_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
-      
-      dispatch({ type: 'ADD_PRODUCT', payload: newProduct });
-      
-      addNotification({
-        type: 'success',
-        title: 'Product Added',
-        message: `${newProduct.name} has been added to the tracking system.`
-      });
-    } catch (error) {
-      console.error('Error adding product:', error);
-      addNotification({
-        type: 'error',
-        title: 'Failed to Add Product',
-        message: error instanceof Error ? error.message : 'An unexpected error occurred'
-      });
-      throw error; // Re-throw for component-level handling if needed
-    }
-  };
-
-  const updateProduct = (product: Product) => {
-    try {
-      // Validate product exists
-      const existingProduct = state.products.find(p => p.id === product.id);
-      if (!existingProduct) {
-        throw new Error('Product not found');
-      }
-
-      // Validate required fields
-      if (!product.name?.trim()) {
-        throw new Error('Product name is required');
-      }
-      if (!product.model?.trim()) {
-        throw new Error('Product model is required');
-      }
-
-      const updatedProduct = { ...product, updatedAt: new Date() };
-      dispatch({ type: 'UPDATE_PRODUCT', payload: updatedProduct });
-      
-      addNotification({
-        type: 'info',
-        title: 'Product Updated',
-        message: `${product.name} has been updated.`
-      });
-    } catch (error) {
-      console.error('Error updating product:', error);
-      addNotification({
-        type: 'error',
-        title: 'Failed to Update Product',
-        message: error instanceof Error ? error.message : 'An unexpected error occurred'
-      });
-      throw error;
-    }
-  };
-
-  const deleteProduct = (productId: string) => {
-    try {
-      if (!productId?.trim()) {
-        throw new Error('Product ID is required');
-      }
-
-      const product = state.products.find(p => p.id === productId);
-      if (!product) {
-        throw new Error('Product not found');
-      }
-
-      dispatch({ type: 'DELETE_PRODUCT', payload: productId });
-      
-      addNotification({
-        type: 'warning',
-        title: 'Product Deleted',
-        message: `${product.name} has been removed from the tracking system.`
-      });
-    } catch (error) {
-      console.error('Error deleting product:', error);
-      addNotification({
-        type: 'error',
-        title: 'Failed to Delete Product',
-        message: error instanceof Error ? error.message : 'An unexpected error occurred'
-      });
-      throw error;
-    }
-  };
-
-  const addNotification = (notificationData: Omit<Notification, 'id' | 'timestamp' | 'read'>) => {
+  // Memoized notification function (no dependencies)
+  const addNotification = useCallback((notificationData: Omit<Notification, 'id' | 'timestamp' | 'read'>) => {
     const notification: Notification = {
       ...notificationData,
       id: `notification_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
@@ -301,6 +211,193 @@ export function AppProvider({ children }: { children: ReactNode }) {
     };
     
     dispatch({ type: 'ADD_NOTIFICATION', payload: notification });
+  }, []);
+
+  // Memoized error handler (depends on addNotification)
+  const handleApiError = useCallback((error: unknown, operation: string) => {
+    let errorMessage = `Failed to ${operation}`;
+    
+    if (error instanceof ApiError) {
+      switch (error.type) {
+        case 'network_error':
+          errorMessage = 'Network error. Please check your connection.';
+          break;
+        case 'authentication':
+          errorMessage = 'Authentication failed. Please login again.';
+          break;
+        case 'authorization':
+          errorMessage = 'You do not have permission to perform this action.';
+          break;
+        default:
+          errorMessage = error.message;
+      }
+    }
+
+    dispatch({ type: 'SET_ERROR', payload: errorMessage });
+    addNotification({
+      type: 'error',
+      title: 'Error',
+      message: errorMessage
+    });
+  }, [addNotification]);
+
+  // Memoized load functions (depend on handleApiError)
+  const loadProducts = useCallback(async (filters?: ProductFilters) => {
+    try {
+      dispatch({ type: 'SET_LOADING', payload: true });
+      dispatch({ type: 'SET_ERROR', payload: null });
+      
+      const response = await apiService.getProducts(filters);
+      dispatch({ 
+        type: 'SET_PRODUCTS', 
+        payload: {
+          products: response.products,
+          pagination: response.pagination
+        }
+      });
+    } catch (error) {
+      handleApiError(error, 'load products');
+    } finally {
+      dispatch({ type: 'SET_LOADING', payload: false });
+    }
+  }, [handleApiError]);
+
+  const loadRoutes = useCallback(async () => {
+    try {
+      const routes = await apiService.getRoutes();
+      dispatch({ type: 'SET_ROUTES', payload: routes });
+    } catch (error) {
+      handleApiError(error, 'load routes');
+    }
+  }, [handleApiError]);
+
+  const loadStations = useCallback(async () => {
+    try {
+      const stations = await apiService.getStations();
+      dispatch({ type: 'SET_STATIONS', payload: stations });
+    } catch (error) {
+      handleApiError(error, 'load stations');
+    }
+  }, [handleApiError]);
+
+  // Load initial data when authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      console.log('AppContext: User authenticated, loading initial data...');
+      
+      const loadInitialData = async () => {
+        try {
+          dispatch({ type: 'SET_LOADING', payload: true });
+          dispatch({ type: 'SET_ERROR', payload: null });
+          
+          // Load data sequentially with individual timeouts
+          console.log('AppContext: Loading products...');
+          await loadProducts();
+          
+          console.log('AppContext: Loading routes...');
+          await loadRoutes();
+          
+          console.log('AppContext: Loading stations...');
+          await loadStations();
+          
+          console.log('AppContext: Initial data loading complete');
+        } catch (error) {
+          console.error('AppContext: Initial data loading failed:', error);
+          dispatch({ type: 'SET_ERROR', payload: 'Failed to load initial data. Please try logging in again.' });
+        } finally {
+          dispatch({ type: 'SET_LOADING', payload: false });
+        }
+      };
+
+      loadInitialData();
+    }
+  }, [isAuthenticated, loadProducts, loadRoutes, loadStations]);
+
+  const addProduct = async (productData: CreateProductRequest) => {
+    try {
+      dispatch({ type: 'SET_LOADING', payload: true });
+      
+      const newProduct = await apiService.createProduct(productData);
+      dispatch({ type: 'ADD_PRODUCT', payload: newProduct });
+      
+      addNotification({
+        type: 'success',
+        title: 'Product Added',
+        message: `${newProduct.name} has been added to the tracking system.`
+      });
+    } catch (error) {
+      handleApiError(error, 'add product');
+      throw error;
+    } finally {
+      dispatch({ type: 'SET_LOADING', payload: false });
+    }
+  };
+
+  const updateProduct = async (id: string, updates: UpdateProductRequest) => {
+    try {
+      dispatch({ type: 'SET_LOADING', payload: true });
+      
+      const updatedProduct = await apiService.updateProduct(id, updates);
+      dispatch({ type: 'UPDATE_PRODUCT', payload: updatedProduct });
+      
+      addNotification({
+        type: 'info',
+        title: 'Product Updated',
+        message: `${updatedProduct.name} has been updated.`
+      });
+    } catch (error) {
+      handleApiError(error, 'update product');
+      throw error;
+    } finally {
+      dispatch({ type: 'SET_LOADING', payload: false });
+    }
+  };
+
+  const deleteProduct = async (productId: string) => {
+    try {
+      dispatch({ type: 'SET_LOADING', payload: true });
+      
+      const product = state.products?.find(p => p.id === productId);
+      if (!product) {
+        throw new Error('Product not found');
+      }
+
+      await apiService.deleteProduct(productId);
+      dispatch({ type: 'DELETE_PRODUCT', payload: productId });
+      
+      addNotification({
+        type: 'warning',
+        title: 'Product Deleted',
+        message: `${product.name} has been removed from the tracking system.`
+      });
+    } catch (error) {
+      handleApiError(error, 'delete product');
+      throw error;
+    } finally {
+      dispatch({ type: 'SET_LOADING', payload: false });
+    }
+  };
+
+  const bulkUpdateProducts = async (bulkUpdate: BulkUpdateRequest) => {
+    try {
+      dispatch({ type: 'SET_LOADING', payload: true });
+      
+      const result = await apiService.bulkUpdateProducts(bulkUpdate);
+      
+      // Reload products to get updated data
+      await loadProducts();
+      
+      addNotification({
+        type: 'success',
+        title: 'Bulk Update Complete',
+        message: `${result.updated_count} products have been updated.`
+      });
+    } catch (error) {
+      handleApiError(error, 'bulk update products');
+      throw error;
+    } finally {
+      dispatch({ type: 'SET_LOADING', payload: false });
+    }
   };
 
   const markNotificationRead = (notificationId: string) => {
@@ -322,9 +419,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const contextValue: AppContextType = {
     state,
     dispatch,
+    loadProducts,
+    loadRoutes,
+    loadStations,
     addProduct,
     updateProduct,
     deleteProduct,
+    bulkUpdateProducts,
     addNotification,
     markNotificationRead,
     clearNotifications,

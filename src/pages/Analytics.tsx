@@ -1,80 +1,97 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { mockProducts } from '@/services/mockData';
+import { useBreadcrumb } from '@/components/Breadcrumbs';
 import { BarChart3, TrendingUp, Clock, Users, AlertTriangle, CheckCircle } from 'lucide-react';
+import { memo, useMemo } from 'react';
 
 interface AnalyticsProps {
   onBack: () => void;
 }
 
-export function Analytics({ onBack }: AnalyticsProps) {
+export const Analytics = memo(function Analytics({ onBack }: AnalyticsProps) {
   const products = mockProducts;
 
-  // Calculate analytics data
-  const analytics = {
-    totalProducts: products.length,
-    normalProducts: products.filter(p => p.status === 'normal').length,
-    overdueProducts: products.filter(p => p.status === 'overdue').length,
-    completedProducts: products.filter(p => p.progress === 100).length,
-    inProgressProducts: products.filter(p => p.progress > 0 && p.progress < 100).length,
-    averageProgress: Math.round(products.reduce((sum, p) => sum + p.progress, 0) / products.length),
+  // Set breadcrumbs for this page
+  useBreadcrumb([
+    {
+      label: 'Analytics',
+      icon: <BarChart3 className="w-4 h-4" />,
+      current: true
+    }
+  ]);
+
+  // Memoize expensive analytics calculations
+  const analytics = useMemo(() => {
+    const totalProducts = products.length;
+    const normalProducts = products.filter(p => p.status === 'normal').length;
+    const overdueProducts = products.filter(p => p.status === 'overdue').length;
+    const completedProducts = products.filter(p => p.progress === 100).length;
+    const inProgressProducts = products.filter(p => p.progress > 0 && p.progress < 100).length;
+    const averageProgress = totalProducts > 0 
+      ? Math.round(products.reduce((sum, p) => sum + p.progress, 0) / totalProducts)
+      : 0;
     
     // Station analysis
-    stationUtilization: (() => {
-      const stationCounts: Record<string, number> = {};
-      products.forEach(p => {
-        const station = p.route.stations.find(s => s.id === p.currentStation);
-        if (station) {
-          stationCounts[station.name] = (stationCounts[station.name] || 0) + 1;
-        }
-      });
-      return Object.entries(stationCounts).map(([name, count]) => ({ name, count }));
-    })(),
+    const stationCounts: Record<string, number> = {};
+    products.forEach(p => {
+      const station = p.route?.stations?.find(s => s.id === p.currentStation);
+      if (station) {
+        stationCounts[station.name] = (stationCounts[station.name] || 0) + 1;
+      }
+    });
+    const stationUtilization = Object.entries(stationCounts).map(([name, count]) => ({ name, count }));
 
     // Route analysis
-    routeUsage: (() => {
-      const routeCounts: Record<string, number> = {};
-      products.forEach(p => {
-        routeCounts[p.route.name] = (routeCounts[p.route.name] || 0) + 1;
-      });
-      return Object.entries(routeCounts).map(([name, count]) => ({ name, count }));
-    })(),
+    const routeCounts: Record<string, number> = {};
+    products.forEach(p => {
+      routeCounts[p.route.name] = (routeCounts[p.route.name] || 0) + 1;
+    });
+    const routeUsage = Object.entries(routeCounts).map(([name, count]) => ({ name, count }));
 
     // Time analysis
-    averageCompletionTime: (() => {
-      const completedProducts = products.filter(p => p.progress === 100);
-      if (completedProducts.length === 0) return 0;
-      const totalTime = completedProducts.reduce((sum, p) => {
+    const completedProductsForTime = products.filter(p => p.progress === 100);
+    const averageCompletionTime = completedProductsForTime.length === 0 ? 0 : 
+      Math.round(completedProductsForTime.reduce((sum, p) => {
         return sum + (p.updatedAt.getTime() - p.createdAt.getTime());
-      }, 0);
-      return Math.round(totalTime / completedProducts.length / (1000 * 60 * 60)); // hours
-    })(),
+      }, 0) / completedProductsForTime.length / (1000 * 60 * 60)); // hours
 
     // Performance by owner
-    ownerPerformance: (() => {
-      const ownerStats: Record<string, { total: number; completed: number; overdue: number }> = {};
-      
-      products.forEach(p => {
-        p.stationHistory.forEach(entry => {
-          if (!ownerStats[entry.owner]) {
-            ownerStats[entry.owner] = { total: 0, completed: 0, overdue: 0 };
-          }
-          ownerStats[entry.owner].total++;
-          if (entry.status === 'completed') {
-            ownerStats[entry.owner].completed++;
-          }
-          if (p.status === 'overdue' && entry.status === 'in_progress') {
-            ownerStats[entry.owner].overdue++;
-          }
-        });
+    const ownerStats: Record<string, { total: number; completed: number; overdue: number }> = {};
+    
+    products.forEach(p => {
+      p.stationHistory.forEach(entry => {
+        if (!ownerStats[entry.owner]) {
+          ownerStats[entry.owner] = { total: 0, completed: 0, overdue: 0 };
+        }
+        ownerStats[entry.owner].total++;
+        if (entry.status === 'completed') {
+          ownerStats[entry.owner].completed++;
+        }
+        if (p.status === 'overdue' && entry.status === 'in_progress') {
+          ownerStats[entry.owner].overdue++;
+        }
       });
+    });
 
-      return Object.entries(ownerStats).map(([owner, stats]) => ({
-        owner,
-        completionRate: Math.round((stats.completed / stats.total) * 100),
-        ...stats
-      }));
-    })()
-  };
+    const ownerPerformance = Object.entries(ownerStats).map(([owner, stats]) => ({
+      owner,
+      completionRate: Math.round((stats.completed / stats.total) * 100),
+      ...stats
+    }));
+
+    return {
+      totalProducts,
+      normalProducts,
+      overdueProducts,
+      completedProducts,
+      inProgressProducts,
+      averageProgress,
+      stationUtilization,
+      routeUsage,
+      averageCompletionTime,
+      ownerPerformance
+    };
+  }, [products]);
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6 theme-transition">
@@ -311,4 +328,4 @@ export function Analytics({ onBack }: AnalyticsProps) {
       </div>
     </div>
   );
-}
+});

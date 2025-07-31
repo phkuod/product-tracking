@@ -34,7 +34,8 @@
       "Bash(cmd /c:*)",
       "Bash(copy AuthContext.tsx AuthContext.backup.tsx)",
       "Bash(copy AuthContext.simple.tsx AuthContext.tsx)",
-      "Bash(cp:*)"
+      "Bash(cp:*)",
+      "Bash(git checkout:*)"
     ],
     "deny": []
   }

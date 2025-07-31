@@ -1,0 +1,32 @@
+#!/bin/sh
+# Git hook to validate commit messages follow conventional commits format
+# https://www.conventionalcommits.org/
+
+commit_regex='^(feat|fix|docs|style|refactor|test|chore|perf|ci|build|revert)(\(.+\))?: .{1,50}'
+
+error_msg="Invalid commit message format!
+
+Commit message should follow the format:
+<type>[optional scope]: <description>
+
+Types:
+- feat: A new feature
+- fix: A bug fix
+- docs: Documentation only changes
+- style: Changes that do not affect the meaning of the code
+- refactor: A code change that neither fixes a bug nor adds a feature
+- test: Adding missing tests or correcting existing tests
+- chore: Changes to the build process or auxiliary tools
+- perf: A code change that improves performance
+- ci: Changes to CI configuration files and scripts
+- build: Changes that affect the build system or dependencies
+- revert: Reverts a previous commit
+
+Example: feat: add user authentication
+Example: fix(ui): resolve button alignment issue
+Example: docs: update installation guide"
+
+if ! grep -qE "$commit_regex" "$1"; then
+    echo "$error_msg" >&2
+    exit 1
+fi
