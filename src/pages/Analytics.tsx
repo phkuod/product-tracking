@@ -34,7 +34,7 @@ export const Analytics = memo(function Analytics({ onBack }: AnalyticsProps) {
     // Station analysis
     const stationCounts: Record<string, number> = {};
     products.forEach(p => {
-      const station = p.route.stations.find(s => s.id === p.currentStation);
+      const station = p.route?.stations?.find(s => s.id === p.currentStation);
       if (station) {
         stationCounts[station.name] = (stationCounts[station.name] || 0) + 1;
       }

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo, memo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -25,37 +25,53 @@ interface ProductCardProps {
   showQuickActions?: boolean;
 }
 
-export function ProductCard({ 
+const ProductCard = memo(function ProductCard({ 
   product, 
   onClick, 
   viewMode = 'card',
   showQuickActions = true 
 }: ProductCardProps) {
-  const { updateProduct } = useAppContext();
+  const { updateProduct, routes } = useAppContext();
   const [showQuickEdit, setShowQuickEdit] = useState(false);
   const [isQuickUpdating, setIsQuickUpdating] = useState(false);
   
-  const currentStation = product.route.stations.find(s => s.id === product.currentStation);
-  const nextStation = product.route.stations[
-    product.route.stations.findIndex(s => s.id === product.currentStation) + 1
-  ];
+  // Memoize expensive calculations
+  const stationInfo = useMemo(() => {
+    // Get complete route data from context, not from product
+    const fullRoute = routes?.find(r => r.id === product.route?.id);
+    const stations = fullRoute?.stations || [];
+    const currentStation = stations?.find(s => s.id === product.currentStation);
+    const currentIndex = stations?.findIndex(s => s.id === product.currentStation) ?? -1;
+    const nextStation = currentIndex >= 0 ? stations[currentIndex + 1] : undefined;
+    return { currentStation, nextStation, currentIndex, stations };
+  }, [routes, product.route?.id, product.currentStation]);
+  
+  const { currentStation, nextStation, stations } = stationInfo;
 
-  const getStatusIcon = () => {
-    switch (product.status) {
-      case 'overdue':
-        return <AlertTriangle className="w-4 h-4" />;
-      case 'normal':
-        return <CheckCircle className="w-4 h-4" />;
-      default:
-        return <Clock className="w-4 h-4" />;
-    }
-  };
+  const statusInfo = useMemo(() => {
+    const getStatusIcon = () => {
+      switch (product.status) {
+        case 'overdue':
+          return <AlertTriangle className="w-4 h-4" />;
+        case 'normal':
+          return <CheckCircle className="w-4 h-4" />;
+        default:
+          return <Clock className="w-4 h-4" />;
+      }
+    };
 
-  const getProgressColor = () => {
-    if (product.status === 'overdue') return 'bg-red-500 dark:bg-red-400';
-    if (product.progress === 100) return 'bg-green-500 dark:bg-green-400';
-    return 'bg-blue-500 dark:bg-blue-400';
-  };
+    const getProgressColor = () => {
+      if (product.status === 'overdue') return 'bg-red-500 dark:bg-red-400';
+      if (product.progress === 100) return 'bg-green-500 dark:bg-green-400';
+      return 'bg-blue-500 dark:bg-blue-400';
+    };
+
+    return {
+      icon: getStatusIcon(),
+      progressColor: getProgressColor(),
+      label: getStatusLabel(product.status)
+    };
+  }, [product.status, product.progress]);
 
   const handleQuickAction = async (action: 'advance' | 'complete' | 'pause') => {
     setIsQuickUpdating(true);
@@ -92,7 +108,7 @@ export function ProductCard({
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3 flex-1 min-w-0">
             <div className="flex-shrink-0">
-              <div className={`w-3 h-3 rounded-full ${getProgressColor()}`} />
+              <div className={`w-3 h-3 rounded-full ${statusInfo.progressColor}`} />
             </div>
             <div className="min-w-0 flex-1">
               <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
@@ -109,7 +125,7 @@ export function ProductCard({
           </div>
           <div className="flex items-center space-x-2 flex-shrink-0">
             <Badge className={`status-${product.status} text-xs px-2 py-1`}>
-              {getStatusIcon()}
+              {statusInfo.icon}
               <span className="ml-1 hidden sm:inline">{getStatusLabel(product.status)}</span>
             </Badge>
             {showQuickActions && product.progress < 100 && nextStation && (
@@ -137,7 +153,7 @@ export function ProductCard({
           <div className="relative">
             <div className="progress-enhanced rounded-full h-2">
               <div 
-                className={`progress-fill rounded-full h-full ${getProgressColor()}`}
+                className={`progress-fill rounded-full h-full ${statusInfo.progressColor}`}
                 style={{ width: `${product.progress}%` }}
               />
             </div>
@@ -219,7 +235,7 @@ export function ProductCard({
           </div>
           <div className="flex items-center space-x-2 flex-shrink-0">
             <div className={`status-${product.status} px-2 py-1 rounded-full flex items-center space-x-1`}>
-              {getStatusIcon()}
+              {statusInfo.icon}
               <span className="text-xs font-medium">
                 {getStatusLabel(product.status)}
               </span>
@@ -238,7 +254,7 @@ export function ProductCard({
           <div className="relative">
             <div className="progress-enhanced rounded-full h-3">
               <div 
-                className={`progress-fill rounded-full h-full ${getProgressColor()}`}
+                className={`progress-fill rounded-full h-full ${statusInfo.progressColor}`}
                 style={{ width: `${product.progress}%` }}
               />
             </div>
@@ -287,7 +303,7 @@ export function ProductCard({
         {/* Route Progress */}
         <div className="pt-2">
           <RouteProgress 
-            stations={product.route.stations}
+            stations={stations}
             currentStationId={product.currentStation}
           />
         </div>
@@ -362,4 +378,6 @@ export function ProductCard({
       </CardContent>
     </Card>
   );
-}
+});
+
+export { ProductCard };

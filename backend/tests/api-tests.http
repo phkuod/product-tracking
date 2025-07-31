@@ -1,0 +1,253 @@
+### Product Process Tracking API Tests
+### Base URL: http://localhost:3001
+
+###
+# Health Check - Test if server is running
+GET http://localhost:3001/health
+
+###
+# API Info - Get API information
+GET http://localhost:3001/api/info
+
+###
+# Test Endpoint - Basic functionality test
+GET http://localhost:3001/api/test
+
+### ==============================================
+### Authentication Tests (Future Implementation)
+### ==============================================
+
+###
+# Login - Get JWT token
+# POST http://localhost:3001/api/auth/login
+# Content-Type: application/json
+# 
+# {
+#   "username": "admin",
+#   "password": "admin123"
+# }
+
+###
+# Refresh Token
+# POST http://localhost:3001/api/auth/refresh
+# Content-Type: application/json
+# Authorization: Bearer {{token}}
+
+### ==============================================
+### Product Tests (Future Implementation)  
+### ==============================================
+
+###
+# Get All Products
+# GET http://localhost:3001/api/products
+# Authorization: Bearer {{token}}
+
+###
+# Get Products with Filters
+# GET http://localhost:3001/api/products?search=Widget&status=normal&page=1&limit=10
+# Authorization: Bearer {{token}}
+
+###
+# Get Single Product
+# GET http://localhost:3001/api/products/{{productId}}
+# Authorization: Bearer {{token}}
+
+###
+# Create New Product
+# POST http://localhost:3001/api/products
+# Content-Type: application/json
+# Authorization: Bearer {{token}}
+# 
+# {
+#   "name": "Test Widget",
+#   "model": "TW-001",
+#   "route_id": "{{routeId}}",
+#   "priority": "medium"
+# }
+
+###
+# Update Product
+# PUT http://localhost:3001/api/products/{{productId}}
+# Content-Type: application/json
+# Authorization: Bearer {{token}}
+# 
+# {
+#   "name": "Updated Widget",
+#   "status": "normal",
+#   "progress": 75
+# }
+
+###
+# Advance Product to Next Station
+# POST http://localhost:3001/api/products/{{productId}}/advance
+# Content-Type: application/json
+# Authorization: Bearer {{token}}
+# 
+# {
+#   "notes": "Completed assembly step",
+#   "field_data": {
+#     "quality_check": true,
+#     "batch_number": "B-2024-001"
+#   }
+# }
+
+###
+# Bulk Update Products
+# POST http://localhost:3001/api/products/bulk
+# Content-Type: application/json
+# Authorization: Bearer {{token}}
+# 
+# {
+#   "product_ids": ["{{productId1}}", "{{productId2}}"],
+#   "updates": {
+#     "priority": "high",
+#     "status": "normal"
+#   }
+# }
+
+###
+# Delete Product
+# DELETE http://localhost:3001/api/products/{{productId}}
+# Authorization: Bearer {{token}}
+
+### ==============================================
+### Route Tests (Future Implementation)
+### ==============================================
+
+###
+# Get All Routes
+# GET http://localhost:3001/api/routes
+# Authorization: Bearer {{token}}
+
+###
+# Get Single Route
+# GET http://localhost:3001/api/routes/{{routeId}}
+# Authorization: Bearer {{token}}
+
+###
+# Create New Route
+# POST http://localhost:3001/api/routes
+# Content-Type: application/json
+# Authorization: Bearer {{token}}
+# 
+# {
+#   "name": "Test Route",
+#   "description": "Test manufacturing route",
+#   "station_ids": ["{{stationId1}}", "{{stationId2}}"]
+# }
+
+###
+# Update Route
+# PUT http://localhost:3001/api/routes/{{routeId}}
+# Content-Type: application/json
+# Authorization: Bearer {{token}}
+# 
+# {
+#   "name": "Updated Route",
+#   "description": "Updated description"
+# }
+
+### ==============================================
+### Station Tests (Future Implementation)
+### ==============================================
+
+###
+# Get All Stations
+# GET http://localhost:3001/api/stations
+# Authorization: Bearer {{token}}
+
+###
+# Create New Station
+# POST http://localhost:3001/api/stations
+# Content-Type: application/json
+# Authorization: Bearer {{token}}
+# 
+# {
+#   "name": "Test Station",
+#   "owner": "John Doe",
+#   "completion_rule": "all_filled",
+#   "estimated_duration": 30,
+#   "fields": [
+#     {
+#       "name": "Quality Check",
+#       "type": "checkbox",
+#       "is_required": true
+#     },
+#     {
+#       "name": "Notes",
+#       "type": "textarea",
+#       "is_required": false
+#     }
+#   ]
+# }
+
+### ==============================================
+### Analytics Tests (Future Implementation)
+### ==============================================
+
+###
+# Get Dashboard Analytics
+# GET http://localhost:3001/api/analytics
+# Authorization: Bearer {{token}}
+
+###
+# Get Analytics with Date Range
+# GET http://localhost:3001/api/analytics?start=2024-01-01&end=2024-12-31
+# Authorization: Bearer {{token}}
+
+###
+# Get Station Utilization
+# GET http://localhost:3001/api/analytics/stations
+# Authorization: Bearer {{token}}
+
+###
+# Get Owner Performance
+# GET http://localhost:3001/api/analytics/owners
+# Authorization: Bearer {{token}}
+
+### ==============================================
+### User Management Tests (Future Implementation)
+### ==============================================
+
+###
+# Get All Users (Admin only)
+# GET http://localhost:3001/api/users
+# Authorization: Bearer {{adminToken}}
+
+###
+# Create New User (Admin only)
+# POST http://localhost:3001/api/users
+# Content-Type: application/json
+# Authorization: Bearer {{adminToken}}
+# 
+# {
+#   "username": "testuser",
+#   "email": "test@example.com",
+#   "password": "password123",
+#   "name": "Test User",
+#   "role": "operator",
+#   "department": "Assembly"
+# }
+
+### ==============================================
+### Error Testing
+### ==============================================
+
+###
+# Test 404 - Non-existent endpoint
+GET http://localhost:3001/api/nonexistent
+
+###
+# Test Rate Limiting - Multiple rapid requests
+GET http://localhost:3001/api/test
+GET http://localhost:3001/api/test
+GET http://localhost:3001/api/test
+
+### ==============================================
+### Variables for Testing
+### ==============================================
+# @token = your-jwt-token-here
+# @adminToken = admin-jwt-token-here
+# @productId = product-uuid-here
+# @routeId = route-uuid-here
+# @stationId = station-uuid-here
