@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Route, Station } from '@/types';
-import { Plus, Edit, Trash2, ArrowLeft, ArrowRight, Clock, Users, Settings } from 'lucide-react';
+import { useBreadcrumb } from '@/components/Breadcrumbs';
+import { Plus, Edit, Trash2, ArrowLeft, ArrowRight, Clock, Users, Settings, Route as RouteIcon } from 'lucide-react';
 import { RouteBuilder } from '@/components/RouteBuilder';
 
 interface RouteManagementProps {
@@ -10,6 +11,14 @@ interface RouteManagementProps {
 }
 
 export function RouteManagement({ onBack }: RouteManagementProps) {
+  // Set breadcrumbs for this page
+  useBreadcrumb([
+    {
+      label: 'Route Management',
+      icon: <RouteIcon className="w-4 h-4" />,
+      current: true
+    }
+  ]);
   const [routes, setRoutes] = useState<Route[]>([
     {
       id: 'route_1',

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo, useMemo } from 'react';
 import { Station } from '@/types';
 import { cn } from '@/lib/utils';
 
@@ -8,8 +8,11 @@ interface RouteProgressProps {
   className?: string;
 }
 
-export function RouteProgress({ stations, currentStationId, className }: RouteProgressProps) {
-  const currentIndex = stations.findIndex(s => s.id === currentStationId);
+export const RouteProgress = memo(function RouteProgress({ stations, currentStationId, className }: RouteProgressProps) {
+  const currentIndex = useMemo(() => 
+    stations.findIndex(s => s.id === currentStationId),
+    [stations, currentStationId]
+  );
 
   return (
     <div className={cn("flex items-center space-x-2", className)}>
@@ -60,4 +63,4 @@ export function RouteProgress({ stations, currentStationId, className }: RoutePr
       })}
     </div>
   );
-}
+});
