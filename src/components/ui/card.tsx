@@ -1,7 +1,7 @@
 import * as React from "react"
 import { cn } from "@/lib/utils"
 
-const Card = React.forwardRef<
+const Card = React.memo(React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => (
@@ -13,7 +13,7 @@ const Card = React.forwardRef<
     )}
     {...props}
   />
-))
+)))
 Card.displayName = "Card"
 
 const CardHeader = React.forwardRef<
@@ -55,12 +55,12 @@ const CardDescription = React.forwardRef<
 ))
 CardDescription.displayName = "CardDescription"
 
-const CardContent = React.forwardRef<
+const CardContent = React.memo(React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => (
   <div ref={ref} className={cn("p-6 pt-0", className)} {...props} />
-))
+)))
 CardContent.displayName = "CardContent"
 
 const CardFooter = React.forwardRef<

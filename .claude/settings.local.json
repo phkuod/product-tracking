@@ -25,8 +25,16 @@
       "Bash(start http://localhost:5177)",
       "Bash(cmd /c start http://localhost:5177)",
       "Bash(npx kill-port:*)",
+      "Bash(git pull:*)",
+      "Bash(start http://localhost:5174)",
+      "Bash(find:*)",
       "Bash(gh pr view:*)",
-      "Bash(git config:*)",
+      "Bash(curl:*)",
+      "Bash(echo:*)",
+      "Bash(cmd /c:*)",
+      "Bash(copy AuthContext.tsx AuthContext.backup.tsx)",
+      "Bash(copy AuthContext.simple.tsx AuthContext.tsx)",
+      "Bash(cp:*)",
       "Bash(git checkout:*)"
     ],
     "deny": []

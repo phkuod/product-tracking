@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -7,6 +7,9 @@ import { Select } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { Product } from '@/types';
 import { mockRoutes } from '@/services/mockData';
+import { useAutoSave } from '@/hooks/useAutoSave';
+import { AutoSaveIndicator } from '@/components/AutoSaveIndicator';
+import { useToast } from '@/contexts/ToastContext';
 import { X, Plus } from 'lucide-react';
 
 interface AddProductFormProps {
@@ -24,6 +27,35 @@ export function AddProductForm({ onSubmit, onCancel }: AddProductFormProps) {
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const toast = useToast();
+
+  // Auto-save functionality
+  const {
+    hasSavedData,
+    loadSavedData,
+    clearSavedData,
+    savedTimestamp
+  } = useAutoSave({
+    key: 'add-product-form',
+    data: formData,
+    delay: 1500 // Save after 1.5 seconds of inactivity
+  });
+
+  // Handle restoring saved data
+  const handleRestore = () => {
+    const savedFormData = loadSavedData();
+    if (savedFormData) {
+      setFormData(savedFormData);
+      setErrors({});
+      toast.success('Form data restored', 'Your previously saved data has been restored.');
+    }
+  };
+
+  // Handle discarding saved data
+  const handleDiscardSaved = () => {
+    clearSavedData();
+    toast.info('Auto-saved data discarded', 'Previous form data has been removed.');
+  };
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -48,12 +80,14 @@ export function AddProductForm({ onSubmit, onCancel }: AddProductFormProps) {
     e.preventDefault();
     
     if (!validateForm()) {
+      toast.error('Form validation failed', 'Please fix the errors below and try again.');
       return;
     }
 
-    const selectedRoute = mockRoutes.find(r => r.id === formData.routeId);
+    const selectedRoute = mockRoutes?.find(r => r.id === formData.routeId);
     if (!selectedRoute) {
       setErrors({ routeId: 'Invalid route selected' });
+      toast.error('Invalid route', 'Please select a valid manufacturing route.');
       return;
     }
 
@@ -66,7 +100,16 @@ export function AddProductForm({ onSubmit, onCancel }: AddProductFormProps) {
       route: selectedRoute
     };
 
-    onSubmit(newProduct);
+    try {
+      onSubmit(newProduct);
+      
+      // Clear auto-saved data after successful submission
+      clearSavedData();
+      
+      toast.success('Product created successfully', `${formData.name} has been added to the system.`);
+    } catch (error) {
+      toast.error('Failed to create product', 'An error occurred while creating the product. Please try again.');
+    }
   };
 
   const handleInputChange = (field: string, value: string) => {
@@ -95,6 +138,14 @@ export function AddProductForm({ onSubmit, onCancel }: AddProductFormProps) {
         </CardHeader>
 
         <CardContent className="space-y-6">
+          {/* Auto-save indicator */}
+          <AutoSaveIndicator
+            hasSavedData={hasSavedData}
+            savedTimestamp={savedTimestamp}
+            onRestore={handleRestore}
+            onDiscard={handleDiscardSaved}
+          />
+          
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Product Name */}
             <div className="space-y-2">
@@ -153,7 +204,7 @@ export function AddProductForm({ onSubmit, onCancel }: AddProductFormProps) {
                 <Label>Route Preview</Label>
                 <div className="bg-gray-50 rounded-lg p-4">
                   {(() => {
-                    const selectedRoute = mockRoutes.find(r => r.id === formData.routeId);
+                    const selectedRoute = mockRoutes?.find(r => r.id === formData.routeId);
                     return selectedRoute ? (
                       <div>
                         <h4 className="font-medium text-gray-900 mb-2">{selectedRoute.name}</h4>

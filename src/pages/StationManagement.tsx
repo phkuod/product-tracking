@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Station, Field } from '@/types';
-import { Plus, Edit, Trash2, ArrowLeft, Clock, User } from 'lucide-react';
+import { useBreadcrumb } from '@/components/Breadcrumbs';
+import { Plus, Edit, Trash2, ArrowLeft, Clock, User, Settings } from 'lucide-react';
 import { StationForm } from '@/components/StationForm';
 
 interface StationManagementProps {
@@ -10,6 +11,14 @@ interface StationManagementProps {
 }
 
 export function StationManagement({ onBack }: StationManagementProps) {
+  // Set breadcrumbs for this page
+  useBreadcrumb([
+    {
+      label: 'Station Management',
+      icon: <Settings className="w-4 h-4" />,
+      current: true
+    }
+  ]);
   const [stations, setStations] = useState<Station[]>([
     {
       id: 'station_1',
